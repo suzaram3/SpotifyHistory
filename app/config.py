@@ -10,18 +10,24 @@ load_dotenv()
 
 
 class Config:
-    # CLIENT_ID = os.environ.get("CLIENT_ID")
-    # CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-    # REDIRECT_URI = os.environ.get("REDIRECT_URI")
-    # OAUTH_TOKEN = os.environ.get("CLIENT_SECRET")
+    # spotipy env variables
     SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
     SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
     SPOTIPY_REDIRECT_URI = os.getenv("SPOTIPY_REDIRECT_URI")
 
+    # database env variables
+    database_params = {
+        "DATABASE_HOST": os.getenv("DATABASE_HOST"),
+        "DATABASE_NAME": os.getenv("DATABASE_NAME"),
+        "DATABASE_USER": os.getenv("DATABASE_USER"),
+        "DATABASE_PASSWORD": os.getenv("DATABASE_PASSWORD"),
+        "DATABASE_PORT": os.getenv("DATABASE_PORT"),
+    }
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DEV_DATABASE_URI")
 
 
 config = {
