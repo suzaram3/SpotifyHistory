@@ -27,7 +27,7 @@ class ExtractSongs:
                 song_artist=item["track"]["artists"][0]["name"],
                 song_album=item["track"]["album"]["name"],
                 album_release_date=item["track"]["album"]["release_date"][:4],
-                timestamp_played=item["played_at"],
+                timestamp_played=item["played_at"][:19],
             )
             for item in tracks
         ]

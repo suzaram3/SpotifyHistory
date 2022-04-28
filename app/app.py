@@ -17,24 +17,37 @@ logging.basicConfig(
     filename="/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/etl_practice/app/logs/logs.log",
 )
 
-logger = logging.getLogger("etl")  # singleton pattern
+logger = logging.getLogger("etl")
 
 
 def main() -> None:
+    # setup
+    index = None
     config = DevelopmentConfig()
     db = Database(config)
     e = ExtractSongs(config)
+
+    # extract/transform recent songs
     get_recent_songs = e.get_recently_played()
 
+    # get last added record
     last_row = db.query_max_record()
     last_row_pk = last_row.timestamp_played
 
+    # make list of timestamps
     get_recent_timestamps = [
-        datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S.%fZ")
+        datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S")
         for song in get_recent_songs
     ]
-    index = get_recent_timestamps.index(last_row_pk)
-    if index > 0:
+
+    # check if last row exists in most recent songs
+    try:
+        index = get_recent_timestamps.index(last_row_pk)
+    except ValueError:
+        logger.info(f"`last_row_pk` not found in `get_recent_songs`")
+
+    # load songs into database
+    if index is not None:
         db.insert_bulk(get_recent_songs[:index])
     else:
         db.insert_bulk(get_recent_songs)
