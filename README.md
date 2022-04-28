@@ -38,5 +38,7 @@ Postgresql database.
 
 
 ### Images
+#### Flow Logic for Data Pipeline
 ![logic flow for data pipeline](https://github.com/suzaram3/etl_practice/blob/main/images/flow_logic.png "Flow Logic for Data Pipeline")
+#### Songs Played Data
 ![screenshot of SQL query from songs_played table](https://github.com/suzaram3/etl_practice/blob/main/images/data.png "Songs Played Data")
