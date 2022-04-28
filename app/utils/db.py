@@ -33,11 +33,10 @@ class Database:
             songs = query.all()
         return songs
 
-    
     def query_max_record(self):
         with Session(self.engine) as session:
-            descending_query = session.query(Song).order_by(Song.timestamp_played.desc())
+            descending_query = session.query(Song).order_by(
+                Song.timestamp_played.desc()
+            )
             last_record = descending_query[0]
         return last_record
-
-

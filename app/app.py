@@ -29,12 +29,16 @@ def main() -> None:
     last_row = db.query_max_record()
     last_row_pk = last_row.timestamp_played
 
-    get_recent_timestamps = [datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S.%fZ") for song in get_recent_songs]
+    get_recent_timestamps = [
+        datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S.%fZ")
+        for song in get_recent_songs
+    ]
     index = get_recent_timestamps.index(last_row_pk)
     if index > 0:
         db.insert_bulk(get_recent_songs[:index])
     else:
         db.insert_bulk(get_recent_songs)
+
 
 if __name__ == "__main__":
     main()

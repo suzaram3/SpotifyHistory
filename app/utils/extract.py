@@ -17,7 +17,9 @@ class ExtractSongs:
         self.after_timestamp = after_timestamp
 
     def get_recently_played(self) -> list:
-        results = self.sp.current_user_recently_played(limit=self.song_limit, after=self.after_timestamp)
+        results = self.sp.current_user_recently_played(
+            limit=self.song_limit, after=self.after_timestamp
+        )
         tracks = results["items"]
         return [
             Song(
