@@ -4,7 +4,6 @@ Date   : 2022-04-14
 Purpose: Main driver for ETL
 """
 import logging
-import re
 import time
 from datetime import datetime, timedelta
 from config import DevelopmentConfig
@@ -29,11 +28,6 @@ def main() -> None:
 
     last_row = db.query_max_record()
     last_row_pk = last_row.timestamp_played
-
-    #first_song = get_recent_songs[0]
-    #strdate = first_song.timestamp_played 
-    #datetimeobj = datetime.strptime(strdate, "%Y-%m-%dT%H:%M:%S.%fZ")
-    #print(f"{datetimeobj=}")
 
     get_recent_timestamps = [datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S.%fZ") for song in get_recent_songs]
     index = get_recent_timestamps.index(last_row_pk)
