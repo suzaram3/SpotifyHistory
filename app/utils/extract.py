@@ -30,7 +30,13 @@ class ExtractSongs:
                 album_id=item["track"]["album"]["id"],
                 album_name=item["track"]["album"]["name"],
                 album_release_date=item["track"]["album"]["release_date"][:4],
-                timestamp_played=item["played_at"][:19],
+                played_at=item["played_at"][:19],
             )
             for item in tracks
         ]
+
+    def search(self, query) -> str:
+        # need song_id, album_id, artist_id
+        raw_data = self.sp.search(query, type="track")
+        return (raw_data["tracks"]["id"], raw_data["tracks"]["artists"][0]["id"], raw_data["tracks"]["album"]["id"])
+

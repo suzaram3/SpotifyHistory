@@ -16,7 +16,7 @@ class Database:
         Base.metadata.create_all(self.engine)
 
     # create session and add objects
-    def insert_bulk(self, songs: list[Song]):
+    def insert_bulk(self, songs: list[SongPlayed]):
         with Session(self.engine) as session:
             try:
                 session.add_all(songs)
@@ -26,17 +26,17 @@ class Database:
                 logger.error(f"{e.__dict__['orig']}")
                 session.rollback()
 
-    def query_songs(self):
+    def query_extract(self):
         logger.info("Get all songs query")
         with Session(self.engine) as session:
-            query = session.query(Song).order_by(Song.timestamp_played.desc())
+            query = session.query(SongPlayed).order_by(SongPlayed.played_at.desc())
             songs = query.all()
         return songs
 
     def query_max_record(self):
         with Session(self.engine) as session:
-            descending_query = session.query(Song).order_by(
-                Song.timestamp_played.desc()
+            descending_query = session.query(SongPlayed).order_by(
+                SongPlayed.played_at.desc()
             )
             last_record = descending_query[0]
         return last_record

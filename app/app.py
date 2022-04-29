@@ -25,32 +25,38 @@ def main() -> None:
     index = None
     config = DevelopmentConfig()
     db = Database(config)
-    #e = ExtractSongs(config)
+    e = ExtractSongs(config)
 
     # extract/transform recent songs
     #get_recent_songs = e.get_recently_played()
+    #print(f"{get_recent_songs=}")
+
+    # search
+    search_result = e.search("logic%20fade%20away")
+    
+    print(f"{search_result=}")
 
     # get last added record
     #last_row = db.query_max_record()
-    #last_row_pk = last_row.timestamp_played
+    #last_row_pk = last_row.played_at
 
     # make list of timestamps
     #get_recent_timestamps = [
-        #datetime.strptime(song.timestamp_played, "%Y-%m-%dT%H:%M:%S")
+        #datetime.strptime(song.played_at, "%Y-%m-%dT%H:%M:%S")
         #for song in get_recent_songs
     #]
 
     # check if last row exists in most recent songs
     #try:
-        #index = get_recent_timestamps.index(last_row_pk)
+    #    index = get_recent_timestamps.index(last_row_pk)
     #except ValueError:
-        #logger.info(f"`last_row_pk` not found in `get_recent_songs`")
+    #    logger.info(f"`last_row_pk` not found in `get_recent_songs`")
 
     # load songs into database
     #if index is not None:
-        #db.insert_bulk(get_recent_songs[:index])
+    #    db.insert_bulk(get_recent_songs[:index])
     #else:
-        #db.insert_bulk(get_recent_songs)
+    #    db.insert_bulk(get_recent_songs)
 
 
 if __name__ == "__main__":

@@ -14,11 +14,11 @@ class SongPlayed(Base):
     artist_name = Column(String(128), nullable=False)
     album_id = Column(String(128), nullable=False)
     album_name = Column(String(128), nullable=False)
-    album_release_date = Column(Integer, nullable=False)
+    album_release_date = Column(String(4), nullable=False)
     played_at = Column(DateTime, primary_key=True)
 
     def __repr__(self) -> str:
-        return f"<ExtractSong: song_id: {self.song_id}, song_name: {self.song_name}, artist_id: {self.artist_id}, artist_name: {self.artist_name}, album_id: {self.album_id}, album_name: {self.album_name}, album_release_date: {self.album_release_date}, timestamp_played: {self.timestamp_played}>\n"
+        return f"<ExtractSong: song_id: {self.song_id}, song_name: {self.song_name}, artist_id: {self.artist_id}, artist_name: {self.artist_name}, album_id: {self.album_id}, album_name: {self.album_name}, album_release_date: {self.album_release_date}, timestamp_played: {self.played_at}>\n"
 
 
 class Artist(Base):
@@ -36,6 +36,7 @@ class Album(Base):
 
     album_id = Column(String(128), primary_key=True, nullable=False)
     album_name = Column(String(128), nullable=False)
+    album_release_year = Column(String(4), nullable=False)
     artist_id = Column(String(128), ForeignKey("artists.artist_id"))
 
     def __repr__(self) -> str:
