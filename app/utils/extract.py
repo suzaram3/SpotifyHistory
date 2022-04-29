@@ -22,10 +22,13 @@ class ExtractSongs:
         )
         tracks = results["items"]
         return [
-            Song(
+            SongPlayed(
+                song_id=item["track"]["id"]
                 song_name=item["track"]["name"],
-                song_artist=item["track"]["artists"][0]["name"],
-                song_album=item["track"]["album"]["name"],
+                artist_id=item["track"]["artists"][0]["id"],
+                artist_name=item["track"]["artists"][0]["name"],
+                album_id=item["track"]["album"]["id"],
+                album_name=item["track"]["album"]["name"],
                 album_release_date=item["track"]["album"]["release_date"][:4],
                 timestamp_played=item["played_at"][:19],
             )
