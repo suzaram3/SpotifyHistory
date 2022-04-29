@@ -35,8 +35,15 @@ class ExtractSongs:
             for item in tracks
         ]
 
-    def search(self, query) -> str:
+class SearchSpotify:
+    def __init__(self, config):
+        self.config = config
+        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
+
+    def search(self) -> str:
         # need song_id, album_id, artist_id
-        raw_data = self.sp.search(query, type="track")
-        return (raw_data["tracks"]["id"], raw_data["tracks"]["artists"][0]["id"], raw_data["tracks"]["album"]["id"])
+        artist,track = "Logic","Fade Away"
+        raw_data = self.sp.search(q=f"track:{track}+artist:{artist}", type="track")
+        print(f"{raw_data=}")
+        #return (raw_data["tracks"]["id"], raw_data["tracks"]["artists"][0]["id"], raw_data["tracks"]["album"]["id"])
 
