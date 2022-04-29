@@ -6,7 +6,7 @@ Base = declarative_base()
 
 
 class SongPlayed(Base):
-    __tablename__ = "songs_played"
+    __tablename__ = "extract"
 
     song_id = Column(String(128), nullable=False)
     song_name = Column(String(128), nullable=False)
@@ -36,7 +36,7 @@ class Album(Base):
 
     album_id = Column(String(128), primary_key=True, nullable=False)
     album_name = Column(String(128), nullable=False)
-    artist_id = Column(String(128), ForeignKey("artist.artist_id"))
+    artist_id = Column(String(128), ForeignKey("artists.artist_id"))
 
     def __repr__(self) -> str:
         return f"<Album: {self.album_name}, {album_id}>"
@@ -47,8 +47,8 @@ class Song(Base):
 
     song_id = Column(String(128), primary_key=True, nullable=False)
     song_name = Column(String(128), nullable=False)
-    album_id = Column(String(128), ForeignKey("album.album_id"))
-    artist_id = Column(String(128), ForeignKey("artist.artist_id"))
+    album_id = Column(String(128), ForeignKey("albums.album_id"))
+    artist_id = Column(String(128), ForeignKey("artists.artist_id"))
 
     def __repr__(self) -> str:
         return f"<Song: {self.song_name}, {song_id}>"

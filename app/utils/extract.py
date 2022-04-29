@@ -5,7 +5,7 @@ Purpose: Extract songs class
 """
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from .model import Song
+from .model import SongPlayed
 
 
 class ExtractSongs:
@@ -23,7 +23,7 @@ class ExtractSongs:
         tracks = results["items"]
         return [
             SongPlayed(
-                song_id=item["track"]["id"]
+                song_id=item["track"]["id"],
                 song_name=item["track"]["name"],
                 artist_id=item["track"]["artists"][0]["id"],
                 artist_name=item["track"]["artists"][0]["name"],
