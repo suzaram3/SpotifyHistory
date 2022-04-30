@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from config import DevelopmentConfig
 from utils.db import Database
 from utils.extract import ExtractSongs, SearchSpotify
-from utils.model import Artist, SongPlayed
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d %(message)s]",

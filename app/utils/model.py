@@ -14,7 +14,7 @@ class SongPlayed(Base):
     artist_name = Column(String(128), nullable=False)
     album_id = Column(String(128), nullable=False)
     album_name = Column(String(128), nullable=False)
-    album_release_date = Column(String(4), nullable=False)
+    album_release_year = Column(String(4), nullable=False)
     played_at = Column(DateTime, primary_key=True)
 
     def __repr__(self) -> str:
@@ -40,7 +40,7 @@ class Album(Base):
     artist_id = Column(String(128), ForeignKey("artists.artist_id"))
 
     def __repr__(self) -> str:
-        return f"<Album: {self.album_name}, {album_id}>"
+        return f"<Album: {self.album_name}, {self.album_id}>"
 
 
 class Song(Base):
@@ -52,17 +52,6 @@ class Song(Base):
     artist_id = Column(String(128), ForeignKey("artists.artist_id"))
 
     def __repr__(self) -> str:
-        return f"<Song: {self.song_name}, {song_id}>"
+        return f"<Song: {self.song_name}, {self.song_id}>"
 
 
-class TempSong(Base):
-    __tablename__ = "songs_played"
-
-    song_name = Column(String(128), nullable=False)
-    song_artist = Column(String(128), nullable=False)
-    song_album = Column(String(128), nullable=False)
-    album_release_date = Column(String(4), nullable=False)
-    timestamp_played = Column(DateTime, primary_key=True)
-
-    def __repr__(self) -> str:
-        return f"\n<TempSong: song_name: {self.song_name}, artist_name: {self.song_artist}, album_name: {self.song_album}, album_release_date: {self.album_release_date}, timestamp_played: {self.timestamp_played}>"

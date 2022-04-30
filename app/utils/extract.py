@@ -29,7 +29,7 @@ class ExtractSongs:
                 artist_name=item["track"]["artists"][0]["name"],
                 album_id=item["track"]["album"]["id"],
                 album_name=item["track"]["album"]["name"],
-                album_release_date=item["track"]["album"]["release_date"][:4],
+                album_release_year=item["track"]["album"]["release_date"][:4],
                 played_at=item["played_at"][:19],
             )
             for item in tracks

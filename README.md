@@ -35,6 +35,8 @@ Postgresql database.
 - Fundamentals of data extraction, transformation and loading (ETL)
 - How to work with the Spotify API
 - More experience with PostgreSQL
+- Added triggers to database to update separate tables as new rows are
+		inserted.
 
 
 ### Images
