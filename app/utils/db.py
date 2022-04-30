@@ -16,18 +16,21 @@ class Database:
         Base.metadata.create_all(self.engine)
 
     # create session and add objects
-    def insert_bulk(self, songs: list[SongPlayed]):
-        with Session(self.engine) as session:
-            try:
-                session.add_all(songs)
-                session.commit()
-                logger.info(f"{len(songs)} rows added to database.")
-            except SQLAlchemyError as e:
-                logger.error(f"{e.__dict__['orig']}")
-                session.rollback()
+    def insert_bulk(self, data_list: list):
+        if data_list:
+            with Session(self.engine) as session:
+                try:
+                    session.add_all(data_list)
+                    session.commit()
+                    logger.info(
+                        f"{len(data_list)} rows added to table {data_list[0].__tablename__}."
+                    )
+                except SQLAlchemyError as e:
+                    logger.error(f"{e.__dict__['orig']}")
+                    session.rollback()
 
     def query_extract(self):
-        logger.info("Get all songs query")
+        # logger.info("Get all songs query")
         with Session(self.engine) as session:
             query = session.query(TempSong).order_by(TempSong.timestamp_played.desc())
             songs = query.all()
@@ -40,3 +43,9 @@ class Database:
             )
             last_record = descending_query[0]
         return last_record
+
+    def query_artists(self):
+        with Session(self.engine) as session:
+            query = session.query(SongPlayed).distinct(SongPlayed.artist_id)
+            artist_ids = query.all()
+        return artist_ids

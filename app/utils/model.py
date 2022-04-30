@@ -28,7 +28,7 @@ class Artist(Base):
     artist_name = Column(String(128), nullable=False)
 
     def __repr__(self) -> str:
-        return f"<Artist: {self.artist_name}, {artist_id}>"
+        return f"<Artist: {self.artist_name}, {self.artist_id}>"
 
 
 class Album(Base):
@@ -65,4 +65,4 @@ class TempSong(Base):
     timestamp_played = Column(DateTime, primary_key=True)
 
     def __repr__(self) -> str:
-        return f"<TempSong: song_name: {self.song_name}, artist_name: {self.song_artist}, album_name: {self.song_album}, album_release_date: {self.album_release_date}, timestamp_played: {self.timestamp_played}>\n"
+        return f"\n<TempSong: song_name: {self.song_name}, artist_name: {self.song_artist}, album_name: {self.song_album}, album_release_date: {self.album_release_date}, timestamp_played: {self.timestamp_played}>"
