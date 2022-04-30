@@ -53,3 +53,16 @@ class Song(Base):
 
     def __repr__(self) -> str:
         return f"<Song: {self.song_name}, {song_id}>"
+
+
+class TempSong(Base):
+    __tablename__ = "songs_played"
+
+    song_name = Column(String(128), nullable=False)
+    song_artist = Column(String(128), nullable=False)
+    song_album = Column(String(128), nullable=False)
+    album_release_date = Column(String(4), nullable=False)
+    timestamp_played = Column(DateTime, primary_key=True)
+
+    def __repr__(self) -> str:
+        return f"<TempSong: song_name: {self.song_name}, artist_name: {self.song_artist}, album_name: {self.song_album}, album_release_date: {self.album_release_date}, timestamp_played: {self.timestamp_played}>\n"

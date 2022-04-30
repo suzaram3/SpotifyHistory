@@ -3,6 +3,7 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
 Purpose: Extract songs class 
 """
+import pprint
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from .model import SongPlayed
@@ -40,10 +41,14 @@ class SearchSpotify:
         self.config = config
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
 
-    def search(self) -> str:
+    def search(self) -> list:
         # need song_id, album_id, artist_id
-        artist,track = "Logic","Fade Away"
-        raw_data = self.sp.search(q=f"track:{track}+artist:{artist}", type="track")
-        print(f"{raw_data=}")
-        #return (raw_data["tracks"]["id"], raw_data["tracks"]["artists"][0]["id"], raw_data["tracks"]["album"]["id"])
+        track = "Fade Away"
+        artist = "Logic"
+        query = f"track:{track} +artist:{artist}"
+        raw_data = self.sp.search(q=query, type="track")
+        song_id = raw_data["tracks"]["items"][0]["id"]
+        artist_id = raw_data["tracks"]["items"][0]["artists"][0]["id"]
+        album_id = raw_data["tracks"]["items"][0]["album"]["id"]
+        print(f"song_id: {song_id}, artist_id: {artist_id}, album_id: {album_id}")
 

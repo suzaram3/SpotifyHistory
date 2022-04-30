@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from .model import Base, Album, Artist, Song, SongPlayed
+from .model import Base, Album, Artist, Song, SongPlayed, TempSong
 
 
 logger = logging.getLogger("etl.load")
@@ -29,7 +29,7 @@ class Database:
     def query_extract(self):
         logger.info("Get all songs query")
         with Session(self.engine) as session:
-            query = session.query(SongPlayed).order_by(SongPlayed.played_at.desc())
+            query = session.query(TempSong).order_by(TempSong.timestamp_played.desc())
             songs = query.all()
         return songs
 

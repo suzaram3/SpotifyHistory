@@ -32,11 +32,14 @@ def main() -> None:
     #get_recent_songs = e.get_recently_played()
     #print(f"{get_recent_songs=}")
 
+    # get all songs
+    songs = db.query_extract()
+    print(f"{songs[0]=}")
+
     # search
-    track, artist = "fade away", "logic"
-    search_result = s.search()
+    #search_result = s.search()
     
-    print(f"{search_result=}")
+    #print(f"{search_result=}")
 
     # get last added record
     #last_row = db.query_max_record()
