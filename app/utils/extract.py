@@ -31,6 +31,7 @@ class ExtractSongs:
                 album_name=item["track"]["album"]["name"],
                 album_release_year=item["track"]["album"]["release_date"][:4],
                 played_at=item["played_at"][:19],
+                spotify_url=item["track"]["external_urls"]["spotify"]
             )
             for item in tracks
         ]
@@ -42,7 +43,6 @@ class SearchSpotify:
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
 
     def search(self, song_list: list) -> list:
-        # need song_id, album_id, artist_id
         new_songs_list = []
         try:
             for song in song_list:
@@ -67,7 +67,6 @@ class SearchSpotify:
                 new_songs_list.append(s)
         except IndexError:
             print(f"failure on query: {query}")
-        # print(f"song_id: {song_id}, artist_id: {artist_id}, album_id: {album_id}")
         return new_songs_list
 
     def search_single(self, song, artist) -> list:
