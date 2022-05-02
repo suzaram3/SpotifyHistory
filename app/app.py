@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta
 from config import DevelopmentConfig
 from utils.db import Database
-from utils.extract import ExtractSongs, SearchSpotify
+from utils.extract import ExtractSongs
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d %(message)s]",
@@ -26,11 +26,9 @@ def main() -> None:
     config = DevelopmentConfig()
     db = Database(config)
     e = ExtractSongs(config)
-    # s = SearchSpotify(config)
 
     # extract/transform recent songs
     get_recent_songs = e.get_recently_played()
-    # print(f"{get_recent_songs=}")
 
     # get all songs
     songs = db.query_extract()
