@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from .model import Base, Album, Artist, Song, SongPlayed
+from .model import Base, SongPlayed
 
 
 logger = logging.getLogger("etl.load")
