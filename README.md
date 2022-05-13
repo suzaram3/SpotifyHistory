@@ -11,8 +11,7 @@ Postgresql database.
 ### Obstacles
 - Authenticating through the Spotify proved to be challenging without
 		using the third party framework Spotipy. I could not figure out how
-		to authenticate without using the framework but just using the
-		requests library.
+		to authenticate without using the framework.
 
 - I wanted to gather all songs streamed from the beginning of the year
 		but I ran into issues using the **user-read-recently-played scope**
@@ -24,12 +23,15 @@ Postgresql database.
 ### Tools Used
 - Cron
 - Dotenv
+- Matplotlib
+- Numpy
 - PostgreSQL
 - Python
 - Requests
 - Spotify API
 - Spotipy
 - SQLAlchemy
+- WordCloud
 
 ### What I Learned
 - Fundamentals of data extraction, transformation and loading (ETL)
