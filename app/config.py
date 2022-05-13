@@ -24,6 +24,12 @@ class Config:
         "DATABASE_PORT": os.getenv("DATABASE_PORT"),
     }
 
+    # word cloud env variables
+    TOP_ARTISTS_FILE_PATH = os.getenv("TOP_ARTISTS_FILE_PATH")
+    WORDCLOUD_MASK = os.getenv("WORDCLOUD_MASK")
+    WORDCLOUD_FONT = os.getenv("WORDCLOUD_FONT")
+    SAVE_WORDCLOUD_PATH = os.getenv("SAVE_WORDCLOUD_PATH")
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
