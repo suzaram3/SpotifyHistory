@@ -1,7 +1,7 @@
 """
 Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-05-12
-Purpose: Rock the Casbah
+Purpose: Generate word cloud from top artists in data pipeline
 """
 import csv
 import matplotlib.pyplot as plt
@@ -18,6 +18,7 @@ def grey_color_func(
 ):
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
 
+
 def main():
 
     d = {}
@@ -28,6 +29,12 @@ def main():
             d[k] = int(v)
 
     mask = np.array(Image.open(c.WORDCLOUD_MASK))
+    wordcloud = WordCloud(
+        background_color="white",
+        font_path=c.WORDCLOUD_FONT,
+        mask=mask,
+        max_font_size=256,
+    ).generate_from_frequencies(d)
     wordcloud = WordCloud(
         font_path=c.WORDCLOUD_FONT, mask=mask, max_font_size=256
     ).generate_from_frequencies(d)
@@ -43,6 +50,7 @@ def main():
         pad_inches=0,
         dpi=1200,
     )
+
 
 if __name__ == "__main__":
     main()

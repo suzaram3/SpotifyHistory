@@ -1,7 +1,7 @@
 """
 Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
-Purpose: Rock the Casbah
+Purpose: Config file for setting up env and database variables 
 """
 import os
 from dotenv import load_dotenv
