@@ -25,10 +25,10 @@ class Config:
     }
 
     # word cloud env variables
-    TOP_ARTISTS_FILE_PATH = os.getenv("TOP_ARTISTS_FILE_PATH")
-    WORDCLOUD_MASK = os.getenv("WORDCLOUD_MASK")
-    WORDCLOUD_FONT = os.getenv("WORDCLOUD_FONT")
     SAVE_WORDCLOUD_PATH = os.getenv("SAVE_WORDCLOUD_PATH")
+    TOP_ARTISTS_FILE_PATH = os.getenv("TOP_ARTISTS_FILE_PATH")
+    WORDCLOUD_FONT = os.getenv("WORDCLOUD_FONT")
+    WORDCLOUD_MASK_GUITAR = os.getenv("WORDCLOUD_MASK_GUITAR")
 
 
 class DevelopmentConfig(Config):

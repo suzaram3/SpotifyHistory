@@ -13,6 +13,7 @@ from config import Config
 
 c = Config()
 
+
 def grey_color_func(
     word, font_size, position, orientation, random_state=None, **kwargs
 ):
@@ -28,13 +29,7 @@ def main():
         for k, v in music_reader:
             d[k] = int(v)
 
-    mask = np.array(Image.open(c.WORDCLOUD_MASK))
-    wordcloud = WordCloud(
-        background_color="white",
-        font_path=c.WORDCLOUD_FONT,
-        mask=mask,
-        max_font_size=256,
-    ).generate_from_frequencies(d)
+    mask = np.array(Image.open(c.WORDCLOUD_MASK_GUITAR))
     wordcloud = WordCloud(
         font_path=c.WORDCLOUD_FONT, mask=mask, max_font_size=256
     ).generate_from_frequencies(d)
@@ -43,6 +38,7 @@ def main():
         wordcloud.recolor(color_func=grey_color_func, random_state=3),
         interpolation="bilinear",
     )
+
     plt.axis("off")
     plt.savefig(
         c.SAVE_WORDCLOUD_PATH,
