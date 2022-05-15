@@ -36,7 +36,7 @@ def csv_frequency(file_path: str) -> dict:
 
 
 def generate_word_cloud(frequency_dict: dict, file_path: str):
-    mask = np.array(Image.open(c.WORDCLOUD_MASK_GUITAR))
+    mask = np.array(Image.open(random.choice(list(c.word_cloud_masks.values()))))
     wc = WordCloud(
         font_path=c.WORDCLOUD_FONT, mask=mask, max_font_size=256
     ).generate_from_frequencies(frequency_dict)

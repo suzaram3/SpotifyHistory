@@ -30,7 +30,17 @@ class Config:
     TOP_ARTISTS_FILE_PATH = os.getenv("TOP_ARTISTS_FILE_PATH")
     TOP_SONGS_FILE_PATH = os.getenv("TOP_SONGS_FILE_PATH")
     WORDCLOUD_FONT = os.getenv("WORDCLOUD_FONT")
-    WORDCLOUD_MASK_GUITAR = os.getenv("WORDCLOUD_MASK_GUITAR")
+
+    word_cloud_masks = {
+        # "WORDCLOUD_MASK_BAND": os.getenv("WORDCLOUD_MASK_BAND"),
+        # "WORDCLOUD_MASK_BUFFALO": os.getenv("WORDCLOUD_MASK_BUFFALO"),
+        # "WORDCLOUD_MASK_DRUM_KIT": os.getenv("WORDCLOUD_MASK_DRUM_KIT"),
+        "WORDCLOUD_MASK_GUITAR": os.getenv("WORDCLOUD_MASK_GUITAR"),
+        "WORDCLOUD_MASK_GUITARIST": os.getenv("WORDCLOUD_MASK_GUITARIST"),
+        "WORDCLOUD_MASK_MIC": os.getenv("WORDCLOUD_MASK_MIC"),
+        "WORDCLOUD_MASK_SPOTIFY": os.getenv("WORDCLOUD_MASK_SPOTIFY"),
+        "WORDCLOUD_MASK_VINYL": os.getenv("WORDCLOUD_MASK_VINYL"),
+    }
 
 
 class DevelopmentConfig(Config):
