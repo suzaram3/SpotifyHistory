@@ -6,6 +6,7 @@ Purpose: Extract songs class
 import logging
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 from .model import SongPlayed
 
 logger = logging.getLogger("etl.extract")
@@ -31,7 +32,7 @@ class ExtractSongs:
                 album_name=item["track"]["album"]["name"],
                 album_release_year=item["track"]["album"]["release_date"][:4],
                 played_at=item["played_at"][:19],
-                spotify_url=item["track"]["external_urls"]["spotify"]
+                spotify_url=item["track"]["external_urls"]["spotify"],
             )
             for item in tracks
         ]
