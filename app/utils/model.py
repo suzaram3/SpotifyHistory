@@ -21,4 +21,4 @@ class SongPlayed(Base):
     __table_args__ = {"schema": "music"}
 
     def __repr__(self) -> str:
-        return f"<ExtractSong: song_id: {self.song_id}, song_name: {self.song_name}, artist_id: {self.artist_id}, artist_name: {self.artist_name}, album_id: {self.album_id}, album_name: {self.album_name}, album_release_date: {self.album_release_year}, timestamp_played: {self.played_at}, url: {self.spotify_url}>\n"
+        return f"<ExtractSong: song_id: {self.song_id}, song_name: {self.song_name}, artist_id: {self.artist_id}, artist_name: {self.artist_name}, album_id: {self.album_id}, album_name: {self.album_name}, album_release_date: {self.album_release_year}, played_at: {self.played_at}, url: {self.spotify_url}>\n"

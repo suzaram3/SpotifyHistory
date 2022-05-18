@@ -29,9 +29,8 @@ def main() -> None:
 
     # extract/transform recent songs
     get_recent_songs = e.get_recently_played()
-
-    # get all songs
-    songs = db.query_extract()
+    unique = list(set(get_recent_songs))
+    get_recent_songs = unique
 
     # get last added record
     last_row = db.query_max_record()
