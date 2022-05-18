@@ -14,7 +14,7 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d %(message)s]",
     datefmt="%d-%m-%Y %H:%M:%S",
     level=logging.INFO,
-    filename="/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/etl_practice/app/logs/logs.log",
+    filename="/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/app/logs/logs.log",
 )
 
 logger = logging.getLogger("etl")
@@ -29,8 +29,6 @@ def main() -> None:
 
     # extract/transform recent songs
     get_recent_songs = e.get_recently_played()
-    unique = list(set(get_recent_songs))
-    get_recent_songs = unique
 
     # get last added record
     last_row = db.query_max_record()
