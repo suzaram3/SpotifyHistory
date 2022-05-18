@@ -44,3 +44,6 @@ Postgresql database.
 ### Images
 #### Top artists word cloud
 ![Image of word cloud created from top artists](https://github.com/suzaram3/etl_practice/blob/main/app/style/images/top_artists.png "Top Artists Word Cloud")
+
+#### Top songs word cloud
+![Image of word cloud created from top songs](https://github.com/suzaram3/etl_practice/blob/main/app/style/images/top_songs.png "Top Songs Word Cloud")
