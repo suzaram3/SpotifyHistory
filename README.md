@@ -44,6 +44,7 @@ Postgresql database.
 - How to work with the Spotify API
 - More experience with PostgreSQL
 - SQL triggers, aggregate functions, and, views.
+- Making word clouds with mask images
 
 ### Images
 #### Top artists word cloud
