@@ -81,3 +81,41 @@ class SearchSpotify:
 
     def current_track(self) -> str:
         return self.sp.current_user_playing_track()
+
+
+"""
+Author : Mitch Suzara <suzaram3@gmail.com>
+Date   : 2022-04-14
+Purpose: Create playlist from top 100
+"""
+
+
+class MakePlaylist:
+    def __init__(self, config, songs, scope="playlist-modify-private"):
+        self.config = config
+        self.scope = scope
+        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=self.scope))
+        self.songs = songs
+        self.playlist_name = "Top 100 Songs"
+        self.description = "LarryDickman Top Live 100 Songs"
+
+    def get_top_100_playlist(self) -> dict:
+        playlists = self.sp.user_playlists(self.sp.me()["id"])
+        print(f"{playlists=}")
+        # for playlist in playlists['items']:
+        #    print(playlist['name'])
+
+    def create_top_100_playlist(self) -> bool:
+        self.sp.user_playlist_create(
+            self.sp.me()["id"],
+            self.playlist_name,
+            public=False,
+            collaborative=False,
+            description=self.description,
+        )
+
+    def update_100_playlist(self, playlist_id, songs) -> bool:
+
+        self.sp.user_playlist_add_tracks(
+            user=self.sp.me(), playlist_id=playlist["id"], tracks=songs
+        )

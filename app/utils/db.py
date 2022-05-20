@@ -1,9 +1,11 @@
 import logging
 import os
 from datetime import datetime
+
+from sqlalchemy import create_engine, func
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+
 from .model import Base, SongPlayed
 
 
@@ -83,3 +85,19 @@ class Database:
                 logger.error(f"{e.__dict__['orig']}")
                 session.rollback()
         print(f"{query=}")
+
+    def query_top_songs(self):
+        with Session(self.engine) as session:
+            try:
+                return (
+                    session.query(func.count(SongPlayed.song_id), SongPlayed.song_id)
+                    .group_by(SongPlayed.song_id)
+                    .order_by(func.count(SongPlayed.song_id).desc())
+                    .limit(100)
+                    .all()
+                )
+            except Exception as e:
+                if hasattr(e, "message"):
+                    logger.error(
+                        f'Error {e.message} occured on SELECT count(*) AS plays,"extract".song_name FROM music."extract" GROUP BY "extract".song_name ORDER BY (count(*)) DESC;'
+                    )
