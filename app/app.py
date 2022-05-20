@@ -17,7 +17,7 @@ logging.basicConfig(
     filename="/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/app/logs/logs.log",
 )
 
-logger = logging.getLogger("etl")
+logger = logging.getLogger("SpotifyHistory")
 
 
 def main() -> None:

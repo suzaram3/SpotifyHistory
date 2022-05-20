@@ -38,7 +38,7 @@ class Config:
         "WORDCLOUD_MASK_GUITARIST": os.getenv("WORDCLOUD_MASK_GUITARIST"),
         "WORDCLOUD_MASK_MIC": os.getenv("WORDCLOUD_MASK_MIC"),
         "WORDCLOUD_MASK_SPOTIFY": os.getenv("WORDCLOUD_MASK_SPOTIFY"),
-        #"WORDCLOUD_MASK_VINYL": os.getenv("WORDCLOUD_MASK_VINYL"),
+        # "WORDCLOUD_MASK_VINYL": os.getenv("WORDCLOUD_MASK_VINYL"),
     }
 
 

@@ -16,7 +16,9 @@ class ExtractSongs:
     def __init__(self, config, song_limit=50):
         self.config = config
         self.scope = "user-read-recently-played"
-        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=self.scope))
+        self.sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(scope=self.scope, requests_timeout=10)
+        )
         self.song_limit = song_limit
 
     def get_recently_played(self) -> list:
@@ -73,3 +75,9 @@ class SearchSpotify:
     def search_single(self, song, artist) -> list:
         query = f"track:{song} +artist:{artist}"
         return self.sp.search(q=query, type="track")
+
+    def search_id(self, song_id) -> str:
+        return self.sp.track(song_id)
+
+    def current_track(self) -> str:
+        return self.sp.current_user_playing_track()
