@@ -1,7 +1,7 @@
 """
 Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
-Purpose: Main driver for ETL
+Purpose: Main driver for updating top 100 songs
 """
 from asyncio.log import logger
 import configparser, logging, logging.config
