@@ -3,20 +3,20 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data pipeline
 """
-import csv, logging, logging.config, random, sys
-from configparser import ConfigParser, ExtendedInterpolation
+import argparse
+import csv
+import sys
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from PIL import Image
-from wordcloud import WordCloud
+from wordcloud import WordCloud, ImageColorGenerator
 
-logging.config.fileConfig("../logging.conf")
-config = ConfigParser(interpolation=ExtendedInterpolation())
-config.read(["../db.conf", "../settings.conf"])
+from config import Config
 
-file_logger = logging.getLogger("file")
+c = Config()
 
 
 def grey_color_func(
@@ -35,10 +35,10 @@ def csv_frequency(file_path: str) -> dict:
     return frequency_dict
 
 
-def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str):
-    mask = np.array(Image.open(mask_image))
+def generate_word_cloud(frequency_dict: dict, file_path: str):
+    mask = np.array(Image.open(random.choice(list(c.word_cloud_masks.values()))))
     wc = WordCloud(
-        font_path=config["mask_fonts"]["wordcloud_font"], mask=mask, max_font_size=256
+        font_path=c.WORDCLOUD_FONT, mask=mask, max_font_size=256
     ).generate_from_frequencies(frequency_dict)
 
     plt.imshow(
@@ -60,25 +60,17 @@ def usage() -> str:
 
 
 def main():
-    options = [option for option in config["mask_images"]]
-    random_mask = random.choice(options)
+
     if len(sys.argv) < 2:
         usage()
     elif sys.argv[1] == "artists":
         generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_artists_csv"]),
-            config["file_paths"]["top_artists_png"],
-            config["mask_images"][random_mask],
+            csv_frequency(c.TOP_ARTISTS_FILE_PATH), c.ARTISTS_WORDCLOUD_PATH
         )
-        file_logger.info(f"Top artist word cloud made with {random_mask}")
-
     elif sys.argv[1] == "songs":
         generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_songs_csv"]),
-            config["file_paths"]["top_songs_png"],
-            config["mask_images"][random_mask],
+            csv_frequency(c.TOP_SONGS_FILE_PATH), c.SONGS_WORDCLOUD_PATH
         )
-        file_logger.info(f"Top artist word cloud made with {random_mask}")
     else:
         usage()
 
