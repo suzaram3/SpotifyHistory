@@ -4,8 +4,6 @@ from dataclasses import asdict
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import func
 
-from db import DB
-
 logger = logging.getLogger("file")
 
 

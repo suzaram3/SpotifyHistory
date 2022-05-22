@@ -3,7 +3,13 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
 Purpose: Spotify handler for setting up Spotipy 
 """
-import configparser, logging
+import base64, configparser, logging, logging.config
+
+logging.config.fileConfig(
+    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
+)
+file_logger = logging.getLogger("file")
+console_logger = logging.getLogger("console")
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -51,5 +57,6 @@ class SpotifyHandler:
     def get_user(self) -> str:
         return self.sp.current_user()
 
-    def update_playlist(self, *args):
-        self.sp.playlist_replace_items(*args)
+    def update_playlist(self, **kwargs):
+        self.sp.playlist_replace_items(kwargs["id"], kwargs["items"])
+        self.sp.playlist_upload_cover_image(kwargs["id"], kwargs["image_b64"])
