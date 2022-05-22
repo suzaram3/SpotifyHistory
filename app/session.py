@@ -111,3 +111,12 @@ class SessionHandler:
             if result is None
             else (asdict(result) if to_json is None else self.to_json(result))
         )
+
+    def get_top_songs(self, to_json=None):
+        return (
+            self.session.query(func.count(self.model.song_id), self.model.song_id)
+            .group_by(self.model.song_id)
+            .order_by(func.count(self.model.song_id).desc())
+            .limit(100)
+            .all()
+        )

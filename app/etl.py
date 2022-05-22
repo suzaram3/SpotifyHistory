@@ -5,7 +5,7 @@ from session import SessionHandler
 from db import DB
 from models import SongPlayed
 from transform import TransformData
-from extract import ExtractData
+from spotify import SpotifyHandler
 
 logging.config.fileConfig(
     "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
@@ -20,13 +20,14 @@ def main() -> None:
     engine = db.engine
     Session = sessionmaker(bind=engine)
     session = Session()
-    td = TransformData()
-    ed = ExtractData()
     user_session = SessionHandler.create(session, SongPlayed)
+
+    td = TransformData()
+    spotify = SpotifyHandler()
 
     before_insert = user_session.get_total_count()
 
-    track_raw_data = ed.extract()
+    track_raw_data = spotify.get_recently_played()
     song_list = [td.make_song_objects(item) for item in track_raw_data["items"]]
 
     try:

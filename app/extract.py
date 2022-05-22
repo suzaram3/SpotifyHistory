@@ -16,3 +16,6 @@ class ExtractData:
 
     def extract(self):
         return self.spotify.get_recently_played()
+
+    def extract_current(self):
+        return self.spotify.current_user_playing_track()
