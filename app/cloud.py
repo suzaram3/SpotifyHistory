@@ -4,7 +4,6 @@ Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data pipeline
 """
 import csv, random, sys
-from email.mime import base
 from configparser import ConfigParser, ExtendedInterpolation
 
 import matplotlib.pyplot as plt
@@ -68,7 +67,7 @@ def usage() -> str:
     print(f"Usage: {sys.argv[0]} [artists|songs]")
 
 
-def main():
+def cloud_driver():
     options = [option for option in config["mask_images"]]
     random_mask = random.choice(options)
     if len(sys.argv) < 2:
@@ -92,4 +91,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    cloud_driver()

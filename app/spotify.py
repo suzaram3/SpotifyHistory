@@ -3,13 +3,7 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
 Purpose: Spotify handler for setting up Spotipy 
 """
-import base64, configparser, logging, logging.config
-
-logging.config.fileConfig(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-)
-file_logger = logging.getLogger("file")
-console_logger = logging.getLogger("console")
+import configparser, logging, logging.config
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth

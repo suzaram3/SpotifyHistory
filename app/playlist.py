@@ -29,7 +29,7 @@ def img_base64(in_file: str) -> str:
         return base64.b64encode(img_file.read())
 
 
-def main() -> None:
+def playlist_driver() -> None:
 
     db = DB.create()
     engine = db.engine
@@ -49,4 +49,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    playlist_driver()
