@@ -1,7 +1,7 @@
 """
 Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-05-12
-Purpose: Generate word cloud from top artists in data pipeline
+Purpose: Generate word cloud from top artists in data warehouse
 """
 import csv, random, sys
 from configparser import ConfigParser, ExtendedInterpolation
@@ -23,7 +23,7 @@ config.read(
 
 def grey_color_func(
     word, font_size, position, orientation, random_state=None, **kwargs
-):
+) -> str:
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
 
 
@@ -67,7 +67,7 @@ def usage() -> str:
     print(f"Usage: {sys.argv[0]} [artists|songs]")
 
 
-def cloud_driver():
+def cloud_driver() None:
     options = [option for option in config["mask_images"]]
     random_mask = random.choice(options)
     if len(sys.argv) < 2:
@@ -78,6 +78,7 @@ def cloud_driver():
             config["file_paths"]["top_artists_image"],
             config["mask_images"][random_mask],
         )
+        generate_thumbnail(config["file_paths"]["top_artists_image"])
 
     elif sys.argv[1] == "songs":
         generate_word_cloud(
@@ -90,5 +91,4 @@ def cloud_driver():
         usage()
 
 
-if __name__ == "__main__":
-    cloud_driver()
+cloud_driver()

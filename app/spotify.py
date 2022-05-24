@@ -33,24 +33,34 @@ class SpotifyHandler:
                     open_browser=False,
                     redirect_uri=credentials["redirect_uri"],
                     scope=credentials["scope"],
-                )
+                ),
+                requests_timeout=10,
+                retries=5,
             )
 
-    def create_playlist(self, **kwargs):
-        self.sp.user_playlist_create(**kwargs)
+    def create_playlist(
+        self, user: str, name: str, public: bool = True, description: str = ""
+    ) -> None:
+        self.sp.user_playlist_create(user, name, public, description)
 
-    def get_current_track(self):
+    def get_album(self, album_id: str) -> dict:
+        return self.sp.album(album_id)
+
+    def get_current_track(self) -> dict:
         return self.sp.current_user_playing_track()
 
-    def get_playlists(self):
+    def get_playlists(self) -> dict:
         return self.sp.current_user_playlists()
 
-    def get_recently_played(self) -> list:
+    def get_recently_played(self) -> dict:
         return self.sp.current_user_recently_played()
 
-    def get_user(self) -> str:
+    def get_user(self) -> dict:
         return self.sp.current_user()
 
-    def update_playlist(self, **kwargs):
-        self.sp.playlist_replace_items(kwargs["id"], kwargs["items"])
-        self.sp.playlist_upload_cover_image(kwargs["id"], kwargs["image_b64"])
+    def update_playlist(
+        self, playlist_id: str, items: list, image: str = None
+    ) -> None:
+        self.sp.playlist_replace_items(playlist_id, items)
+        if image is not None:
+            self.sp.playlist_upload_cover_image(playlist_id, image)

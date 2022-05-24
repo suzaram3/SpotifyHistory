@@ -1,4 +1,4 @@
-from models import SongPlayed, TestSongPlayed
+from models import SongPlayed
 
 
 class TransformData:
@@ -12,7 +12,7 @@ class TransformData:
         else:
             TransformData.__instance = self
 
-    def make_song_objects(self, raw_track_data: list) -> list[TestSongPlayed]:
+    def make_song_objects(self, raw_track_data: list) -> list[SongPlayed]:
         return {
             "song_id": raw_track_data["track"]["id"],
             "song_name": raw_track_data["track"]["name"],
