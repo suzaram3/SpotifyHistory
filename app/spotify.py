@@ -58,9 +58,7 @@ class SpotifyHandler:
     def get_user(self) -> dict:
         return self.sp.current_user()
 
-    def update_playlist(
-        self, playlist_id: str, items: list, image: str = None
-    ) -> None:
+    def update_playlist(self, playlist_id: str, items: list, image: str = None) -> None:
         self.sp.playlist_replace_items(playlist_id, items)
         if image is not None:
             self.sp.playlist_upload_cover_image(playlist_id, image)

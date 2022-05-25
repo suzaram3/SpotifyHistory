@@ -4,13 +4,13 @@ Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data warehouse
 """
 import csv, random, sys
-from configparser import ConfigParser, ExtendedInterpolation
+from configparser import ConfigParser, ExtendedInterpolation, Interpolation
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from PIL import Image
-from wordcloud import WordCloud
+from wordcloud import ImageColorGenerator, WordCloud
 
 config = ConfigParser(interpolation=ExtendedInterpolation())
 config.read(
@@ -39,15 +39,57 @@ def csv_frequency(file_path: str) -> dict:
 
 def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -> None:
     mask = np.array(Image.open(mask_image))
+
     wc = WordCloud(
-        font_path=config["mask_fonts"]["wordcloud_font"], mask=mask, max_font_size=256
+        background_color="black",
+        font_path=config["mask_fonts"]["wordcloud_font"],
+        mask=mask,
+        max_font_size=256,
     ).generate_from_frequencies(frequency_dict)
+
+    # image_colors = ImageColorGenerator(mask)
 
     plt.imshow(
         wc.recolor(color_func=grey_color_func, random_state=3),
         interpolation="bilinear",
     )
 
+    # fig, axes = plt.subplots(1,3)
+    # axes[0].imshow(wc, interpolation="bilinear")
+    # axes[1].imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
+    # axes[2].imshow(mask, cmap=plt.cm.gray, interpolation="bilinear")
+    # for ax in axes:
+    #    ax.set_axis_off()
+    # plt.show()
+    plt.axis("off")
+    plt.savefig(
+        file_path,
+        bbox_inches="tight",
+        pad_inches=0,
+        dpi=1200,
+    )
+
+
+def generate_word_cloud_multi(
+    frequency_dict: dict, file_path: str, mask_image: str
+) -> None:
+    mask = np.array(Image.open(mask_image))
+
+    wc = WordCloud(
+        background_color="black",
+        font_path=config["mask_fonts"]["wordcloud_font"],
+        mask=mask,
+        max_font_size=256,
+    ).generate_from_frequencies(frequency_dict)
+
+    image_colors = ImageColorGenerator(mask)
+
+    fig, axes = plt.subplots(1, 3)
+    axes[0].imshow(wc, interpolation="bilinear")
+    axes[1].imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
+    axes[2].imshow(mask, cmap=plt.cm.gray, interpolation="bilinear")
+    for ax in axes:
+        ax.set_axis_off()
     plt.axis("off")
     plt.savefig(
         file_path,
@@ -64,10 +106,10 @@ def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
 
 
 def usage() -> str:
-    print(f"Usage: {sys.argv[0]} [artists|songs]")
+    print(f"Usage: {sys.argv[0]} [artists|multi|songs]")
 
 
-def cloud_driver() None:
+def cloud_driver() -> None:
     options = [option for option in config["mask_images"]]
     random_mask = random.choice(options)
     if len(sys.argv) < 2:
@@ -87,6 +129,12 @@ def cloud_driver() None:
             config["mask_images"][random_mask],
         )
         generate_thumbnail(config["file_paths"]["top_songs_image"])
+    elif sys.argv[1] == "multi":
+        generate_word_cloud_multi(
+            csv_frequency(config["file_paths"]["top_artists_csv"]),
+            config["file_paths"]["top_artists_image_multi"],
+            config["mask_images"][random_mask],
+        )
     else:
         usage()
 
