@@ -15,10 +15,11 @@ from wordcloud import ImageColorGenerator, WordCloud
 config = ConfigParser(interpolation=ExtendedInterpolation())
 config.read(
     [
-        "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/db.conf",
         "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/settings.conf",
     ]
 )
+
+# print(f"{config['mask_fonts']['marker']}")
 
 
 def grey_color_func(
@@ -42,25 +43,15 @@ def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -
 
     wc = WordCloud(
         background_color="black",
-        font_path=config["mask_fonts"]["wordcloud_font"],
+        font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
     ).generate_from_frequencies(frequency_dict)
-
-    # image_colors = ImageColorGenerator(mask)
 
     plt.imshow(
         wc.recolor(color_func=grey_color_func, random_state=3),
         interpolation="bilinear",
     )
-
-    # fig, axes = plt.subplots(1,3)
-    # axes[0].imshow(wc, interpolation="bilinear")
-    # axes[1].imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
-    # axes[2].imshow(mask, cmap=plt.cm.gray, interpolation="bilinear")
-    # for ax in axes:
-    #    ax.set_axis_off()
-    # plt.show()
     plt.axis("off")
     plt.savefig(
         file_path,
@@ -77,7 +68,7 @@ def generate_word_cloud_multi(
 
     wc = WordCloud(
         background_color="black",
-        font_path=config["mask_fonts"]["wordcloud_font"],
+        font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
     ).generate_from_frequencies(frequency_dict)
@@ -119,6 +110,7 @@ def cloud_driver() -> None:
             csv_frequency(config["file_paths"]["top_artists_csv"]),
             config["file_paths"]["top_artists_image"],
             config["mask_images"][random_mask],
+            # config["mask_fonts"]["epoxy"],
         )
         generate_thumbnail(config["file_paths"]["top_artists_image"])
 
@@ -127,12 +119,18 @@ def cloud_driver() -> None:
             csv_frequency(config["file_paths"]["top_songs_csv"]),
             config["file_paths"]["top_songs_image"],
             config["mask_images"][random_mask],
+            # config["mask_fonts"]["marker_font"],
         )
         generate_thumbnail(config["file_paths"]["top_songs_image"])
     elif sys.argv[1] == "multi":
         generate_word_cloud_multi(
             csv_frequency(config["file_paths"]["top_artists_csv"]),
             config["file_paths"]["top_artists_image_multi"],
+            config["mask_images"][random_mask],
+        )
+        generate_word_cloud_multi(
+            csv_frequency(config["file_paths"]["top_songs_csv"]),
+            config["file_paths"]["top_songs_image_multi"],
             config["mask_images"][random_mask],
         )
     else:
