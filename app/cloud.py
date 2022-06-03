@@ -19,8 +19,6 @@ config.read(
     ]
 )
 
-# print(f"{config['mask_fonts']['marker']}")
-
 
 def grey_color_func(
     word, font_size, position, orientation, random_state=None, **kwargs

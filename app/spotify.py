@@ -62,3 +62,11 @@ class SpotifyHandler:
         self.sp.playlist_replace_items(playlist_id, items)
         if image is not None:
             self.sp.playlist_upload_cover_image(playlist_id, image)
+
+    def get_genre_seeds(self) -> list:
+        return self.sp.recommendation_genre_seeds()
+
+    def get_recommendations(self, artists: list, genres: list, tracks: list) -> list:
+        return self.sp.recommendations(
+            seed_artists=artists, seed_genres=genres, seed_tracks=tracks, limit=100
+        )
