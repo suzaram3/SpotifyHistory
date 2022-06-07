@@ -13,6 +13,7 @@ class TransformData:
             TransformData.__instance = self
 
     def make_song_objects(self, raw_track_data: list) -> list[SongPlayed]:
+        """Return dict of desired json data"""
         return {
             "song_id": raw_track_data["track"]["id"],
             "song_name": raw_track_data["track"]["name"],

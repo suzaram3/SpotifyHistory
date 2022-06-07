@@ -11,6 +11,8 @@ Base = declarative_base()
 
 @dataclass
 class SongPlayed(Base):
+    """Class to represent a record in the extract table"""
+
     __tablename__ = "extract"
 
     song_id: str = Column(String(256), nullable=False)
@@ -31,6 +33,8 @@ class SongPlayed(Base):
 
 @dataclass
 class AlbumSong(Base):
+    """Class to represent a record in the album_songs table"""
+
     __tablename__ = "album_songs"
 
     song_number: int = Column(Integer, primary_key=True)
@@ -54,6 +58,8 @@ class AlbumSong(Base):
 
 @dataclass
 class Albums(Base):
+    """Class to represent a record in the master_albums table"""
+
     __tablename__ = "master_albums"
 
     album_id: str = Column(String(256), primary_key=True)

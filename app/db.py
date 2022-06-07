@@ -1,18 +1,14 @@
-import configparser, logging, sqlalchemy
-import logging.config
+import configparser, sqlalchemy
 
 config = configparser.ConfigParser()
 config.read(
-    [
-        "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/db.conf",
-        # "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf",
-    ]
+    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/db.conf"
 )
-logger = logging.getLogger("logFile")
-logger.info("Logger for db")
 
 
 class DB:
+    """Singleton DB class to connect to Postgres DB and create engine"""
+
     __instance = None
 
     def __init__(self) -> None:

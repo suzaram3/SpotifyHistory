@@ -2,6 +2,7 @@ from spotify import SpotifyHandler
 
 
 def parse_result(data: dict) -> dict:
+    """Parse dict for desired data from raw data input"""
     return {
         "song_id": data["item"]["id"],
         "song_name": data["item"]["name"],
@@ -15,6 +16,7 @@ def parse_result(data: dict) -> dict:
 
 
 def current_song() -> None:
+    """Main function to get currently playing song from Spotify"""
 
     spotify = SpotifyHandler()
 

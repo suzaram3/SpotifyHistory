@@ -26,10 +26,12 @@ class SessionHandler:
 
     @staticmethod
     def create(session, model):
+        """Singleton create instance of session using session and table model"""
         SessionHandler.__instance = SessionHandler(session, model)
         return SessionHandler.__instance
 
     def insert_many(self, record_list):
+        """Bulk insert into model"""
         statements = [
             pg_insert(self.model).values(record_dict).on_conflict_do_nothing()
             for record_dict in record_list
@@ -37,14 +39,17 @@ class SessionHandler:
         return [self.session.execute(statement) for statement in statements]
 
     def update(self, query_dict, update_dict):
+        """Bulk update for model"""
         return (
             self.session.query(self.model).filter_by(**query_dict).update(update_dict)
         )
 
     def get_total_count(self):
+        """Return total count in model"""
         return self.session.query(self.model).count()
 
     def get_all(self, query_dict, to_json=None):
+        """Return all query results in model"""
         results = self.session.query(self.model).filter_by(**query_dict).all()
         return [
             asdict(result) if to_json is None else self.to_json(result)
@@ -52,12 +57,15 @@ class SessionHandler:
         ]
 
     def delete(self, query_dict):
+        """Delete from model"""
         return self.session.query(self.model).filter_by(**query_dict).delete()
 
     def to_json(self, record_obj):
+        """Return query as json object"""
         return json.dumps(asdict(record_obj), cls=SchemaEncoder, ensure_ascii=False)
 
     def get_latest_row(self, to_json=None):
+        """Return latest record in model"""
         result = (
             self.session.query(self.model).order_by(self.model.played_at.desc()).first()
         )
@@ -68,6 +76,7 @@ class SessionHandler:
         )
 
     def get_top_songs(self, to_json=None):
+        """Return top songs in SongPlayed model"""
         return (
             self.session.query(func.count(self.model.song_id), self.model.song_id)
             .group_by(self.model.song_id)

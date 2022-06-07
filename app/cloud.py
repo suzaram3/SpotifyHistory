@@ -23,10 +23,12 @@ config.read(
 def grey_color_func(
     word, font_size, position, orientation, random_state=None, **kwargs
 ) -> str:
+    """Returns grey color for word cloud font"""
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
 
 
 def csv_frequency(file_path: str) -> dict:
+    """Read CSV file and returns a dict of frequencies"""
     frequency_dict = {}
     with open(file_path, newline="") as csvfile:
         music_reader = csv.reader(csvfile, delimiter="|")
@@ -37,6 +39,7 @@ def csv_frequency(file_path: str) -> dict:
 
 
 def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -> None:
+    """Generates a word cloud from frequency_dict, and mask_image. Stores result in file_path"""
     mask = np.array(Image.open(mask_image))
 
     wc = WordCloud(
@@ -62,6 +65,7 @@ def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -
 def generate_word_cloud_multi(
     frequency_dict: dict, file_path: str, mask_image: str
 ) -> None:
+    """Generates a multi plot word cloud from frequency_dict, and mask_image. Stores result in file_path"""
     mask = np.array(Image.open(mask_image))
 
     wc = WordCloud(
@@ -89,16 +93,19 @@ def generate_word_cloud_multi(
 
 
 def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
+    """Generates a thumbnail image from the word cloud plot"""
     with Image.open(in_file) as tn:
         tn.thumbnail(size)
         tn.copy().save(f"{in_file}.thumbnail", "JPEG")
 
 
 def usage() -> str:
+    """Shows usage of the cloud.py program"""
     print(f"Usage: {sys.argv[0]} [artists|multi|songs]")
 
 
 def cloud_driver() -> None:
+    """Main function for the cloud.py program"""
     options = [option for option in config["mask_images"]]
     random_mask = random.choice(options)
     if len(sys.argv) < 2:

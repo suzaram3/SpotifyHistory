@@ -16,19 +16,16 @@ config = configparser.ConfigParser()
 config.read(
     "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/spotify.conf"
 )
-logging.config.fileConfig(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-)
-file_logger = logging.getLogger("file")
-console_logger = logging.getLogger("console")
 
 
 def img_base64(in_file: str) -> str:
+    """Geneate base64 string from thumbnail image file"""
     with open(in_file, "rb") as img_file:
         return base64.b64encode(img_file.read())
 
 
 def playlist_driver() -> None:
+    """Main function to update the top 100 songs playlist: updates track list and cover image"""
 
     db = DB.create()
     engine = db.engine
