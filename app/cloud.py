@@ -47,6 +47,7 @@ def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -
         font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
+        max_words=2000,
     ).generate_from_frequencies(frequency_dict)
 
     plt.imshow(
@@ -73,6 +74,7 @@ def generate_word_cloud_multi(
         font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
+        max_words=2000,
     ).generate_from_frequencies(frequency_dict)
 
     image_colors = ImageColorGenerator(mask)

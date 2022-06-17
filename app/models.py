@@ -1,8 +1,11 @@
 import datetime
 from dataclasses import dataclass
-from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint, func
+from sqlalchemy import Column, ForeignKey, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+
 from db import DB
+
+# from test_db import DB
 
 db = DB.create()
 engine = db.engine
@@ -32,43 +35,65 @@ class SongPlayed(Base):
 
 
 @dataclass
-class AlbumSong(Base):
-    """Class to represent a record in the album_songs table"""
+class Artist(Base):
+    """Class to represent a record in the artists table"""
 
-    __tablename__ = "album_songs"
+    __tablename__ = "artists"
 
-    song_number: int = Column(Integer, primary_key=True)
-    song_id: str = Column(String(256), primary_key=True)
-    song_name: str = Column(String(256), nullable=False)
-    song_length: int = Column(Integer, nullable=False)
-    album_id: str = Column(String(256), primary_key=True)
-    album_name: str = Column(String(256), nullable=False)
-    artist_id: str = Column(String(256), primary_key=True)
-    artist_name: str = Column(String(256), nullable=False)
+    id: str = Column(String(32), primary_key=True)
+    name: str = Column(String(256), nullable=False)
+
+    __table_args__ = {"schema": "music"}
+
+
+@dataclass
+class Album(Base):
+    """Class to represent a record in the albums table"""
+
+    __tablename__ = "albums"
+
+    id: str = Column(String(32), primary_key=True)
+    name: str = Column(String(256), nullable=False)
+    release_year: str = Column(String(4), nullable=False)
+    artist_id: str = Column(
+        String(32), ForeignKey(Artist.id, ondelete="CASCADE"), nullable=False
+    )
+
+    __table_args__ = {"schema": "music"}
+
+
+@dataclass
+class Song(Base):
+    """Class to represent a record in the songs table"""
+
+    __tablename__ = "songs"
+
+    id: str = Column(String(32), primary_key=True)
+    name: str = Column(String(256), nullable=False)
+    album_id: str = Column(
+        String(32), ForeignKey(Album.id, ondelete="CASCADE"), nullable=False
+    )
+    artist_id: str = Column(
+        String(32), ForeignKey(Artist.id, ondelete="CASCADE"), nullable=False
+    )
+    spotify_url: str = Column(String(64), nullable=False)
+
+    __table_args__ = {"schema": "music"}
+
+
+@dataclass
+class SongStreamed(Base):
+    """Class to represent a record in the streams table"""
+
+    __tablename__ = "streams"
+
+    song_id: str = Column(String(32), primary_key=True)
+    played_at: datetime.datetime = Column(DateTime, primary_key=True)
 
     __table_args__ = {"schema": "music"}
 
     def __repr__(self) -> str:
-        return f"<AlbumSong: song_number: {self.song_number},\
-            song_id: {self.song_id}, song_name: {self.song_name},\
-            song_length: {self.song_length}, artist_id: {self.artist_id},\
-            album_id: {self.album_id}, album_name: {self.album_name},\
-            artist_name: {self.artist_name},\n"
-
-
-@dataclass
-class Albums(Base):
-    """Class to represent a record in the master_albums table"""
-
-    __tablename__ = "master_albums"
-
-    album_id: str = Column(String(256), primary_key=True)
-    album_name: str = Column(String(256), nullable=False)
-    album_release_year: str = Column(String(256), nullable=False)
-    artist_id: str = Column(String(256), primary_key=True)
-    artist_name: str = Column(String(256), nullable=False)
-
-    __table_args__ = {"schema": "music"}
+        return f"<ExtractSong: song_id: {self.song_id}, played_at: {self.played_at}>\n"
 
 
 # create table if it does not exist, if you change the model,

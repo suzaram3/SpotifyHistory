@@ -3,7 +3,7 @@ import datetime, logging, logging.config
 from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
 
-from db import DB
+from test_db import DB
 from models import Artist, Album, Song, SongStreamed
 from transform import TransformData
 from spotify import SpotifyHandler
@@ -71,6 +71,8 @@ def main() -> None:
         {"song_id": record["song_id"], "played_at": record["played_at"]}
         for record in transform_raw_data
     ]
+
+    console_logger.info(f"{stream_data[0]=}")
 
     # insert
     try:

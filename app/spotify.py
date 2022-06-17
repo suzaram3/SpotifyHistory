@@ -79,3 +79,7 @@ class SpotifyHandler:
         return self.sp.recommendations(
             seed_artists=artists, seed_genres=genres, seed_tracks=tracks, limit=100
         )
+
+    def get_track(self, track_id: str) -> dict:
+        """Return track data"""
+        return self.sp.track(track_id)

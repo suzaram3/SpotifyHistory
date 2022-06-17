@@ -28,7 +28,7 @@ class DB:
         return DB.__instance
 
     def create_engine(self):
-        return sqlalchemy.create_engine(config["prod"]["db_uri"])
+        return sqlalchemy.create_engine(config["qa"]["db_uri"])
 
     def connect(self):
         return self.engine.connect()
