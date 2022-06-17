@@ -49,7 +49,6 @@ def generate_word_cloud(
         font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
-        #max_words=2000,
     ).generate_from_frequencies(frequency_dict)
 
     if multi_flag:
