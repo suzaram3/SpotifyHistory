@@ -38,33 +38,8 @@ def csv_frequency(file_path: str) -> dict:
     return frequency_dict
 
 
-def generate_word_cloud(frequency_dict: dict, file_path: str, mask_image: str) -> None:
-    """Generates a word cloud from frequency_dict, and mask_image. Stores result in file_path"""
-    mask = np.array(Image.open(mask_image))
-
-    wc = WordCloud(
-        background_color="black",
-        font_path=config["mask_fonts"]["epoxy"],
-        mask=mask,
-        max_font_size=256,
-        max_words=2000,
-    ).generate_from_frequencies(frequency_dict)
-
-    plt.imshow(
-        wc.recolor(color_func=grey_color_func, random_state=3),
-        interpolation="bilinear",
-    )
-    plt.axis("off")
-    plt.savefig(
-        file_path,
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=1200,
-    )
-
-
-def generate_word_cloud_multi(
-    frequency_dict: dict, file_path: str, mask_image: str
+def generate_word_cloud(
+    frequency_dict: dict, file_path: str, mask_image: str, multi_flag=False
 ) -> None:
     """Generates a multi plot word cloud from frequency_dict, and mask_image. Stores result in file_path"""
     mask = np.array(Image.open(mask_image))
@@ -74,24 +49,37 @@ def generate_word_cloud_multi(
         font_path=config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
-        max_words=2000,
+        #max_words=2000,
     ).generate_from_frequencies(frequency_dict)
 
-    image_colors = ImageColorGenerator(mask)
+    if multi_flag:
+        image_colors = ImageColorGenerator(mask)
+        fig, axes = plt.subplots(1, 3)
+        axes[0].imshow(wc, interpolation="bilinear")
+        axes[1].imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
+        axes[2].imshow(mask, cmap=plt.cm.gray, interpolation="bilinear")
+        for ax in axes:
+            ax.set_axis_off()
+        plt.axis("off")
+        plt.savefig(
+            file_path,
+            bbox_inches="tight",
+            pad_inches=0,
+            dpi=1200,
+        )
+    else:
+        plt.imshow(
+            wc.recolor(color_func=grey_color_func, random_state=3),
+            interpolation="bilinear",
+        )
+        plt.axis("off")
+        plt.savefig(
+            file_path,
+            bbox_inches="tight",
+            pad_inches=0,
+            dpi=1200,
+        )
 
-    fig, axes = plt.subplots(1, 3)
-    axes[0].imshow(wc, interpolation="bilinear")
-    axes[1].imshow(wc.recolor(color_func=image_colors), interpolation="bilinear")
-    axes[2].imshow(mask, cmap=plt.cm.gray, interpolation="bilinear")
-    for ax in axes:
-        ax.set_axis_off()
-    plt.axis("off")
-    plt.savefig(
-        file_path,
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=1200,
-    )
 
 
 def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
@@ -117,7 +105,6 @@ def cloud_driver() -> None:
             csv_frequency(config["file_paths"]["top_artists_csv"]),
             config["file_paths"]["top_artists_image"],
             config["mask_images"][random_mask],
-            # config["mask_fonts"]["epoxy"],
         )
         generate_thumbnail(config["file_paths"]["top_artists_image"])
 
@@ -126,19 +113,20 @@ def cloud_driver() -> None:
             csv_frequency(config["file_paths"]["top_songs_csv"]),
             config["file_paths"]["top_songs_image"],
             config["mask_images"][random_mask],
-            # config["mask_fonts"]["marker_font"],
         )
         generate_thumbnail(config["file_paths"]["top_songs_image"])
     elif sys.argv[1] == "multi":
-        generate_word_cloud_multi(
+        generate_word_cloud(
             csv_frequency(config["file_paths"]["top_artists_csv"]),
             config["file_paths"]["top_artists_image_multi"],
             config["mask_images"][random_mask],
+            multi_flag=True
         )
-        generate_word_cloud_multi(
+        generate_word_cloud(
             csv_frequency(config["file_paths"]["top_songs_csv"]),
             config["file_paths"]["top_songs_image_multi"],
             config["mask_images"][random_mask],
+            multi_flag=True
         )
     else:
         usage()
