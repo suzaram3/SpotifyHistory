@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from db import DB
 
-db = DB.create()
+db = DB("prod")
 engine = db.engine
 Base = declarative_base()
 

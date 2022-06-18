@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
 
 from db import DB
-from models import SongPlayed
+from models import SongStreamed
 from spotify import SpotifyHandler
 
 config = configparser.ConfigParser()
@@ -27,11 +27,11 @@ def img_base64(in_file: str) -> str:
 def playlist_driver() -> None:
     """Main function to update the top 100 songs playlist: updates track list and cover image"""
 
-    db = DB.create()
+    db = DB("prod")
     engine = db.engine
     Session = sessionmaker(bind=engine)
     session = Session()
-    user_session = SessionHandler.create(session, SongPlayed)
+    user_session = SessionHandler.create(session, SongStreamed)
     spotify = SpotifyHandler()
     counts = user_session.get_top_songs()
     song_ids = [song[1] for song in counts]
