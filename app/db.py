@@ -11,13 +11,14 @@ class DB:
 
     __instance = None
 
-    def __init__(self) -> None:
+    def __init__(self, instance_flag: str) -> None:
         """Virtually private constructor"""
 
         if DB.__instance is not None:
             raise Exception("This class is a singleton, use DB.create()")
         else:
             DB.__instance = self
+        self.instance_flag = instance_flag
         self.engine = self.create_engine()
 
     @staticmethod
@@ -28,7 +29,7 @@ class DB:
         return DB.__instance
 
     def create_engine(self):
-        return sqlalchemy.create_engine(config["prod"]["db_uri"])
+        return sqlalchemy.create_engine(config[self.instance_flag]["db_uri"])
 
     def connect(self):
         return self.engine.connect()

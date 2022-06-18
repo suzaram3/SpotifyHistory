@@ -80,7 +80,6 @@ def generate_word_cloud(
         )
 
 
-
 def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
     """Generates a thumbnail image from the word cloud plot"""
     with Image.open(in_file) as tn:
@@ -119,13 +118,13 @@ def cloud_driver() -> None:
             csv_frequency(config["file_paths"]["top_artists_csv"]),
             config["file_paths"]["top_artists_image_multi"],
             config["mask_images"][random_mask],
-            multi_flag=True
+            multi_flag=True,
         )
         generate_word_cloud(
             csv_frequency(config["file_paths"]["top_songs_csv"]),
             config["file_paths"]["top_songs_image_multi"],
             config["mask_images"][random_mask],
-            multi_flag=True
+            multi_flag=True,
         )
     else:
         usage()

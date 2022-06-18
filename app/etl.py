@@ -1,4 +1,4 @@
-import datetime, logging, logging.config
+import logging, logging.config
 
 from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
@@ -18,7 +18,7 @@ console_logger = logging.getLogger("console")
 def main() -> None:
     """Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
     # setup
-    db = DB.create()
+    db = DB.create("prod")
     engine = db.engine
     Session = sessionmaker(bind=engine)
     session = Session()

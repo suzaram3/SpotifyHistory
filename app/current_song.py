@@ -22,7 +22,7 @@ def current_song() -> None:
 
     raw_data = spotify.get_current_track()
 
-    print(f"CurrentSong:<{parse_result(raw_data)}>")
+    print(f"CurrentSong:{parse_result(raw_data)=}")
 
 
 if __name__ == "__main__":
