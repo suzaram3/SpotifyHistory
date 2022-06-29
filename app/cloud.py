@@ -3,8 +3,10 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data warehouse
 """
-import csv, random, sys
-from configparser import ConfigParser, ExtendedInterpolation, Interpolation
+import csv
+import random
+import sys
+from configparser import ConfigParser, ExtendedInterpolation
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,7 +43,8 @@ def csv_frequency(file_path: str) -> dict:
 def generate_word_cloud(
     frequency_dict: dict, file_path: str, mask_image: str, multi_flag=False
 ) -> None:
-    """Generates a multi plot word cloud from frequency_dict, and mask_image. Stores result in file_path"""
+    """Generates a multi plot word cloud from frequency_dict,
+    and mask_image. Stores result in file_path"""
     mask = np.array(Image.open(mask_image))
 
     wc = WordCloud(

@@ -16,6 +16,11 @@ config = configparser.ConfigParser()
 config.read(
     "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/spotify.conf"
 )
+logging.config.fileConfig(
+    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
+)
+console_logger = logging.getLogger("console")
+file_logger = logging.getLogger("playlist")
 
 
 def img_base64(in_file: str) -> str:
@@ -42,6 +47,8 @@ def playlist_driver() -> None:
         "image": image_str,
     }
     spotify.update_playlist(**items)
+    file_logger.info(f"Playlist: {items['playlist_id']} updated.")
+    console_logger.info(f"Playlist: {items['playlist_id']} updated.")
 
 
 playlist_driver()

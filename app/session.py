@@ -76,7 +76,7 @@ class SessionHandler:
         )
 
     def get_top_songs(self, to_json=None):
-        """Return top songs in SongPlayed model"""
+        """Return top 100 songs in SongStreamed model"""
         return (
             self.session.query(func.count(self.model.song_id), self.model.song_id)
             .group_by(self.model.song_id)

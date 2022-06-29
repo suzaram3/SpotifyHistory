@@ -18,7 +18,7 @@ console_logger = logging.getLogger("console")
 def main() -> None:
     """Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
     # setup
-    db = DB.create("prod")
+    db = DB("prod")
     engine = db.engine
     Session = sessionmaker(bind=engine)
     session = Session()

@@ -7,7 +7,7 @@ def parse_result(data: dict) -> dict:
         "song_id": data["item"]["id"],
         "song_name": data["item"]["name"],
         "artist_id": data["item"]["artists"][0]["id"],
-        "artist_id": data["item"]["artists"][0]["name"],
+        "artist_name": data["item"]["artists"][0]["name"],
         "album_id": data["item"]["album"]["id"],
         "album_name": data["item"]["album"]["name"],
         "album_release_year": data["item"]["album"]["release_date"][:4],
