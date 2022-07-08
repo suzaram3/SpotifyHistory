@@ -11,7 +11,7 @@ from spotify import SpotifyHandler
 
 try:
     logging.config.fileConfig(
-            "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
+        "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
     )
     file_logger = logging.getLogger("file")
     console_logger = logging.getLogger("console")
