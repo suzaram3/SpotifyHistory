@@ -1,17 +1,5 @@
-import datetime, json, time
-
-from dataclasses import asdict
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy import func
-
-
-class SchemaEncoder(json.JSONEncoder):
-    """Encoder for converting Model objects into JSON."""
-
-    def default(self, obj):
-        if isinstance(obj, datetime.date):
-            return time.strftime("%Y-%m-%dT%H:%M:%SZ", obj.utctimetuple())
-        return json.JSONEncoder.default(self, obj)
 
 
 class SessionHandler:
@@ -48,32 +36,9 @@ class SessionHandler:
         """Return total count in model"""
         return self.session.query(self.model).count()
 
-    def get_all(self, query_dict, to_json=None):
-        """Return all query results in model"""
-        results = self.session.query(self.model).filter_by(**query_dict).all()
-        return [
-            asdict(result) if to_json is None else self.to_json(result)
-            for result in results
-        ]
-
     def delete(self, query_dict):
         """Delete from model"""
         return self.session.query(self.model).filter_by(**query_dict).delete()
-
-    def to_json(self, record_obj):
-        """Return query as json object"""
-        return json.dumps(asdict(record_obj), cls=SchemaEncoder, ensure_ascii=False)
-
-    def get_latest_row(self, to_json=None):
-        """Return latest record in model"""
-        result = (
-            self.session.query(self.model).order_by(self.model.played_at.desc()).first()
-        )
-        return (
-            None
-            if result is None
-            else (asdict(result) if to_json is None else self.to_json(result))
-        )
 
     def get_top_songs(self, to_json=None):
         """Return top 100 songs in SongStreamed model"""
