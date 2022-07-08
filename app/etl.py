@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import pathlib
 
 from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
@@ -10,9 +9,14 @@ from models import Artist, Album, Song, SongStreamed
 from transform import TransformData
 from spotify import SpotifyHandler
 
-logging.config.fileConfig(pathlib.Path("../logging.conf"))
-file_logger = logging.getLogger("file")
-console_logger = logging.getLogger("console")
+try:
+    logging.config.fileConfig(
+            "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
+    )
+    file_logger = logging.getLogger("file")
+    console_logger = logging.getLogger("console")
+except Error as e:
+    print(f"ERROR: {e}")
 
 
 def main() -> None:
