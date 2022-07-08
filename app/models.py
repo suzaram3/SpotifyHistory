@@ -63,7 +63,7 @@ class SongStreamed(Base):
 
     __tablename__ = "streams"
 
-    song_id: str = Column(String(32), primary_key=True)
+    song_id: str = Column(String(32), ForeignKey(Song.id), primary_key=True)
     played_at: datetime.datetime = Column(DateTime, primary_key=True)
 
     __table_args__ = {"schema": "music"}

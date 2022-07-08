@@ -40,7 +40,7 @@ class SessionHandler:
         """Delete from model"""
         return self.session.query(self.model).filter_by(**query_dict).delete()
 
-    def get_top_songs(self, to_json=None):
+    def get_top_songs(self):
         """Return top 100 songs in SongStreamed model"""
         return (
             self.session.query(func.count(self.model.song_id), self.model.song_id)

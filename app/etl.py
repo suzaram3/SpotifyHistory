@@ -1,4 +1,6 @@
-import logging, logging.config
+import logging
+import logging.config
+import pathlib
 
 from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
@@ -8,9 +10,7 @@ from models import Artist, Album, Song, SongStreamed
 from transform import TransformData
 from spotify import SpotifyHandler
 
-logging.config.fileConfig(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-)
+logging.config.fileConfig(pathlib.Path("../logging.conf"))
 file_logger = logging.getLogger("file")
 console_logger = logging.getLogger("console")
 
@@ -74,10 +74,10 @@ def main() -> None:
 
     # insert
     try:
-        stream_session.insert_many(stream_data)
-        artist_session.insert_many(artist_data)
         album_session.insert_many(album_data)
+        artist_session.insert_many(artist_data)
         song_session.insert_many(song_data)
+        stream_session.insert_many(stream_data)
 
         album_after_count = album_session.get_total_count()
         artist_after_count = artist_session.get_total_count()
