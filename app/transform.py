@@ -1,15 +1,5 @@
 class TransformData:
-    __instance = None
-
-    def __init__(self, scope="user-read-recently-played") -> None:
-        """Virtually private constructor"""
-
-        if TransformData.__instance is not None:
-            raise Exception("This class is a singleton")
-        else:
-            TransformData.__instance = self
-
-    def transform_data(self, raw_track_data: list) -> dict:
+    def transform_data(self, raw_track_data=list) -> dict:
         """Return dict of desired json data"""
         return {
             "song_id": raw_track_data["track"]["id"],
@@ -22,3 +12,37 @@ class TransformData:
             "played_at": raw_track_data["played_at"][:19],
             "spotify_url": raw_track_data["track"]["external_urls"]["spotify"],
         }
+
+    def compile_model_lists(self, data_list: list) -> list:
+        return (
+            [
+                {
+                    "id": record["album_id"],
+                    "name": record["album_name"],
+                    "release_year": record["album_release_year"],
+                    "artist_id": record["artist_id"],
+                }
+                for record in data_list
+            ],
+            [
+                {
+                    "id": record["artist_id"],
+                    "name": record["artist_name"],
+                }
+                for record in data_list
+            ],
+            [
+                {
+                    "id": record["song_id"],
+                    "name": record["song_name"],
+                    "album_id": record["album_id"],
+                    "artist_id": record["artist_id"],
+                    "spotify_url": record["spotify_url"],
+                }
+                for record in data_list
+            ],
+            [
+                {"song_id": record["song_id"], "played_at": record["played_at"]}
+                for record in data_list
+            ],
+        )
