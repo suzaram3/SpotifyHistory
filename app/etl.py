@@ -9,17 +9,14 @@ from models import Artist, Album, Song, SongStreamed
 from transform import TransformData
 from spotify import SpotifyHandler
 
-try:
-    logging.config.fileConfig(
-        "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-    )
-    file_logger = logging.getLogger("file")
-    console_logger = logging.getLogger("console")
-except Error as e:
-    print(f"ERROR: {e}")
+logging.config.fileConfig(
+    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
+)
+file_logger = logging.getLogger("file")
+console_logger = logging.getLogger("console")
 
 
-def main() -> None:
+def etl() -> None:
     """Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
     # setup
     db = DB("prod")
@@ -114,5 +111,4 @@ def main() -> None:
         session.close()
 
 
-if __name__ == "__main__":
-    main()
+etl()

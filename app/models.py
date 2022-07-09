@@ -68,9 +68,6 @@ class SongStreamed(Base):
 
     __table_args__ = {"schema": "music"}
 
-    def __repr__(self) -> str:
-        return f"<ExtractSong: song_id: {self.song_id}, played_at: {self.played_at}>\n"
-
 
 # create table if it does not exist, if you change the model,
 # you have to drop the table first for this code to alter it in the db
