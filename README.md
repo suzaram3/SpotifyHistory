@@ -47,6 +47,35 @@ Postgresql database.
 - Making word clouds with mask images
 
 ### Images
+
+#### Request Spotify Personal Data Flowchart
+```mermaid
+flowchart TD;
+    id1[BEGIN] -- 1. Request Peronsal Data -->
+
+    id2(((Spotify API)))
+
+    id2 --2. Parse Personal Data --> id3[JSON File] -- 3. Load Streams Table -->
+
+    id4[(Database)] --4. Query Unique Song IDs --> id5[Unique Song IDs]
+
+    -- 5. Request Song Data ----> id2
+
+    id2 -- 6. Load Artist, Album, Song Tables --> id4
+```
+#### Spotify History Data Flowchart
+```mermaid
+flowchart TD;
+    id1[etl.py] -- 1. Request Recently Played Songs -->
+
+    id2(((Spotify API)))
+
+    id2 --2. Parse Recent Songs Data --> id3[JSON] -- 3. Load Streams Artists Albums Songs Table -->
+
+    id4[(Database)]
+
+
+```
 #### Top artists word cloud
 ![Image of word cloud created from top artists](https://github.com/suzaram3/etl_practice/blob/main/app/style/images/top_artists.png "Top Artists Word Cloud")
 
