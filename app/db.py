@@ -4,12 +4,8 @@ import logging.config
 import sqlalchemy
 
 config = configparser.ConfigParser()
-config.read(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/db.conf"
-)
-logging.config.fileConfig(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-)
+config.read("/home/msuzara/SpotifyHistory/db.conf")
+logging.config.fileConfig("/home/msuzara/SpotifyHistory/logging.conf")
 file_logger = logging.getLogger("file")
 console_logger = logging.getLogger("console")
 

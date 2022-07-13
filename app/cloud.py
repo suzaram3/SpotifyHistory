@@ -17,7 +17,7 @@ from wordcloud import ImageColorGenerator, WordCloud
 config = ConfigParser(interpolation=ExtendedInterpolation())
 config.read(
     [
-        "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/settings.conf",
+        "/home/msuzara/SpotifyHistory/settings.conf",
     ]
 )
 

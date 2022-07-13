@@ -2,6 +2,7 @@ import datetime
 from dataclasses import dataclass
 from sqlalchemy import Column, ForeignKey, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import OperationalError
 
 from db import DB
 
@@ -71,4 +72,7 @@ class SongStreamed(Base):
 
 # create table if it does not exist, if you change the model,
 # you have to drop the table first for this code to alter it in the db
-Base.metadata.create_all(engine)
+try:
+    Base.metadata.create_all(engine)
+except OperationalError as error:
+    print(f"ERROR: {error}") 

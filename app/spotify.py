@@ -9,9 +9,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 config = configparser.ConfigParser()
-config.read(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/spotify.conf"
-)
+config.read("/home/msuzara/SpotifyHistory/spotify.conf")
 credentials = dict(config.items("spotify"))
 
 
@@ -64,12 +62,6 @@ class SpotifyHandler:
         """Return dict of user profile"""
         return self.sp.current_user()
 
-    def update_playlist(self, playlist_id: str, items: list, image: str = None) -> None:
-        """Update playlist with tracks and cover image"""
-        self.sp.playlist_replace_items(playlist_id, items)
-        if image is not None:
-            self.sp.playlist_upload_cover_image(playlist_id, image)
-
     def get_genre_seeds(self) -> list:
         """Return a list of genre seeds"""
         return self.sp.recommendation_genre_seeds()
@@ -83,3 +75,13 @@ class SpotifyHandler:
     def get_track(self, track_id: str) -> dict:
         """Return track data"""
         return self.sp.track(track_id)
+
+    def playlist_append(self, playlist_id: str, items: list) -> None:
+        """Update playlist with tracks and cover image"""
+        self.sp.playlist_add_items(playlist_id, items, position=100)
+
+    def update_playlist(self, playlist_id: str, items: list, image: str = None) -> None:
+        """Update playlist with tracks and cover image"""
+        self.sp.playlist_replace_items(playlist_id, items)
+        if image is not None:
+            self.sp.playlist_upload_cover_image(playlist_id, image)

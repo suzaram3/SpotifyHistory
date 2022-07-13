@@ -17,6 +17,9 @@ class SessionHandler:
     def get_table_count(self, session: object, model: object) -> int:
         return {"model": model, "count": session.query(model).count()}
 
+    def get_top_records(self, session: object, model: object, max_records=100) -> list:
+        return list(session.query(model, func.count(model)).group_by(model).order_by(func.count(model).desc()).limit(max_records).all())
+
     def insert_many(self, session: object, payload: dict) -> None:
         """Bulk insert into model"""
         statements = [

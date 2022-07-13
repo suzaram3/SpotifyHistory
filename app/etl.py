@@ -6,10 +6,8 @@ from session import SessionHandler
 from spotify import SpotifyHandler
 from transform import TransformData
 
-logging.config.fileConfig(
-    "/Users/msuzara/Library/Mobile Documents/com~apple~CloudDocs/cloud_workspace/python/SpotifyHistory/logging.conf"
-)
-file_logger = logging.getLogger("prod")
+logging.config.fileConfig("/home/msuzara/SpotifyHistory/logging.conf")
+file_logger = logging.getLogger("file")
 console_logger = logging.getLogger("console")
 
 
