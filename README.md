@@ -46,7 +46,7 @@ Postgresql database.
 - SQL triggers, aggregate functions, and, views.
 - Making word clouds with mask images
 
-### Images
+# Flowcharts
 
 #### Request Spotify Personal Data Flowchart
 ```mermaid
@@ -76,6 +76,8 @@ flowchart TD;
 
 
 ```
+# Images 
+
 #### Top artists word cloud
 ![Image of word cloud created from top artists](https://github.com/suzaram3/etl_practice/blob/main/app/style/images/top_artists.png "Top Artists Word Cloud")
 
