@@ -1,7 +1,7 @@
 import configparser
+from configparser import ConfigParser, ExtendedInterpolation
 import logging
 import logging.config
-from configparser import ConfigParser, ExtendedInterpolation
 from db import DB
 
 
