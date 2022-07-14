@@ -52,28 +52,50 @@ Postgresql database.
 ```mermaid
 flowchart TD;
     id1[BEGIN] -- 1. Request Peronsal Data -->
-
     id2(((Spotify API)))
-
     id2 --2. Parse Personal Data --> id3[JSON File] -- 3. Load Streams Table -->
-
     id4[(Database)] --4. Query Unique Song IDs --> id5[Unique Song IDs]
-
     -- 5. Request Song Data ----> id2
-
     id2 -- 6. Load Artist, Album, Song Tables --> id4
+    
 ```
+
 #### Spotify History Data Flowchart
 ```mermaid
 flowchart TD;
     id1[etl.py] -- 1. Request Recently Played Songs -->
-
     id2(((Spotify API)))
-
-    id2 --2. Parse Recent Songs Data --> id3[JSON] -- 3. Load Streams Artists Albums Songs Table -->
-
+    id2 --2. Parse Recent Songs Data --> id3[JSON] -- "3. Load Streams [Artists|Albums|Songs] Table" -->
     id4[(Database)]
+```
+# Class Diagrams
 
+```mermaid
+classDiagram
+    class Album
+    Album: +String id
+    Album: +String name
+    Album: +String release_year
+    Album: +String artist_id
+
+    class Artist
+    Artist: +String id
+    Artist: +String name
+
+    class Song
+    Song: +String id
+    Song: +String name
+    Song: +String artist_id
+    Song: +String album_id
+
+    class SongStreamed
+    SongStreamed: +String song_id
+    SongStreamed: +Datetime played_at
+    
+    Artist "1" --> "*" Album
+    Artist "1" --> "*" Song
+    Album "1" --> "*" Song
+    SongStreamed --> Song
 
 ```
 # Images 
