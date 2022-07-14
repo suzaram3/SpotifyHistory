@@ -4,22 +4,20 @@ Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data warehouse
 """
 import csv
+import os
 import random
 import sys
-from configparser import ConfigParser, ExtendedInterpolation
-
+import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+from configparser import ConfigParser, ExtendedInterpolation
+from multiprocessing import Process, Queue
 from PIL import Image
 from wordcloud import ImageColorGenerator, WordCloud
 
-config = ConfigParser(interpolation=ExtendedInterpolation())
-config.read(
-    [
-        "/home/msuzara/SpotifyHistory/settings.conf",
-    ]
-)
+from config import ProductionConfig
+from session import SessionHandler
 
 
 def grey_color_func(
@@ -41,7 +39,7 @@ def csv_frequency(file_path: str) -> dict:
 
 
 def generate_word_cloud(
-    frequency_dict: dict, file_path: str, mask_image: str, multi_flag=False
+    frequency_dict: dict, file_path: str, mask_image: str, multi_flag: bool
 ) -> None:
     """Generates a multi plot word cloud from frequency_dict,
     and mask_image. Stores result in file_path"""
@@ -49,7 +47,7 @@ def generate_word_cloud(
 
     wc = WordCloud(
         background_color="black",
-        font_path=config["mask_fonts"]["epoxy"],
+        font_path=pc.config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
     ).generate_from_frequencies(frequency_dict)
@@ -90,47 +88,73 @@ def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
         tn.copy().save(f"{in_file}.thumbnail", "JPEG")
 
 
-def usage() -> str:
-    """Shows usage of the cloud.py program"""
-    print(f"Usage: {sys.argv[0]} [artists|multi|songs]")
+# setup
+tic = time.perf_counter()
+pc = ProductionConfig()
+sh = SessionHandler()
+
+# query top artists and songs
+with sh.session_scope(pc.engine) as session:
+    top_song_list = sh.get_top_song_names(session)
+    top_artist_list = sh.get_top_artists(session)
+
+top_artist_frequencies = {artist[0]: artist[1] for artist in top_artist_list}
+
+top_song_frequencies = {song[0]: song[1] for song in top_song_list}
 
 
-def cloud_driver() -> None:
-    """Main function for the cloud.py program"""
-    options = [option for option in config["mask_images"]]
-    random_mask = random.choice(options)
-    if len(sys.argv) < 2:
-        usage()
-    elif sys.argv[1] == "artists":
-        generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_artists_csv"]),
-            config["file_paths"]["top_artists_image"],
-            config["mask_images"][random_mask],
-        )
-        generate_thumbnail(config["file_paths"]["top_artists_image"])
-
-    elif sys.argv[1] == "songs":
-        generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_songs_csv"]),
-            config["file_paths"]["top_songs_image"],
-            config["mask_images"][random_mask],
-        )
-        generate_thumbnail(config["file_paths"]["top_songs_image"])
-    elif sys.argv[1] == "multi":
-        generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_artists_csv"]),
-            config["file_paths"]["top_artists_image_multi"],
-            config["mask_images"][random_mask],
-            multi_flag=True,
-        )
-        generate_word_cloud(
-            csv_frequency(config["file_paths"]["top_songs_csv"]),
-            config["file_paths"]["top_songs_image_multi"],
-            config["mask_images"][random_mask],
-            multi_flag=True,
-        )
-    else:
-        usage()
+# random mask image
+options = [option for option in pc.config["mask_images"]]
+random_mask = random.choice(options)
 
 
-cloud_driver()
+# generate word clouds and thumbnails
+cpu = os.cpu_count()
+pool = [
+    Process(
+        target=generate_word_cloud,
+        args=(
+            top_artist_frequencies,
+            pc.config["file_paths"]["top_artists_image"],
+            pc.config["mask_images"][random_mask],
+            False,
+        ),
+    ),
+    Process(
+        target=generate_word_cloud,
+        args=(
+            top_song_frequencies,
+            pc.config["file_paths"]["top_songs_image"],
+            pc.config["mask_images"][random_mask],
+            False,
+        ),
+    ),
+    Process(
+        target=generate_word_cloud,
+        args=(
+            top_artist_frequencies,
+            pc.config["file_paths"]["top_artists_image_multi"],
+            pc.config["mask_images"][random_mask],
+            True,
+        ),
+    ),
+    Process(
+        target=generate_word_cloud,
+        args=(
+            top_song_frequencies,
+            pc.config["file_paths"]["top_songs_image_multi"],
+            pc.config["mask_images"][random_mask],
+            True,
+        ),
+    ),
+]
+for p in pool:
+    p.start()
+
+for p in pool:
+    p.join()
+
+generate_thumbnail(pc.config["file_paths"]["top_artists_image"])
+generate_thumbnail(pc.config["file_paths"]["top_songs_image"])
+
+pc.console_logger.info(f"Completed in {time.perf_counter() - tic} seconds")

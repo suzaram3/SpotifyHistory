@@ -1,31 +1,16 @@
-import configparser
-import logging
-import logging.config
 import sqlalchemy
-
-config = configparser.ConfigParser()
-config.read("/home/msuzara/SpotifyHistory/db.conf")
-logging.config.fileConfig("/home/msuzara/SpotifyHistory/logging.conf")
-file_logger = logging.getLogger("file")
-console_logger = logging.getLogger("console")
 
 
 class DB:
     """Singleton DB class to connect to Postgres DB and create engine"""
 
-    def __init__(self, instance_flag: str) -> None:
+    def __init__(self, db_uri: str) -> None:
         """Virtually private constructor"""
-        self.instance_flag = instance_flag
+        self.db_uri = db_uri
         self.engine = self.create_engine()
 
     def create_engine(self):
-        try:
-            return sqlalchemy.create_engine(config[self.instance_flag]["db_uri"])
-        except Exception as error:
-            file_logger.error(f"{error}")
+        return sqlalchemy.create_engine(self.db_uri)
 
     def connect(self):
-        try:
-            return self.engine.connect()
-        except Exception as error:
-            file_logger.error(f"{error}")
+        return self.engine.connect()

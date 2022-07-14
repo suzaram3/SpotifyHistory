@@ -3,14 +3,13 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
 Purpose: Spotify handler for setting up Spotipy 
 """
-import configparser, logging, logging.config
-
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from config import Config
 
-config = configparser.ConfigParser()
-config.read("/home/msuzara/SpotifyHistory/spotify.conf")
-credentials = dict(config.items("spotify"))
+
+c = Config()
+credentials = dict(c.config["spotify"])
 
 
 class SpotifyHandler:
@@ -76,9 +75,9 @@ class SpotifyHandler:
         """Return track data"""
         return self.sp.track(track_id)
 
-    def playlist_append(self, playlist_id: str, items: list) -> None:
+    def playlist_append(self, playlist_id: str, items: list, index: int) -> None:
         """Update playlist with tracks and cover image"""
-        self.sp.playlist_add_items(playlist_id, items, position=100)
+        self.sp.playlist_add_items(playlist_id, items, index)
 
     def update_playlist(self, playlist_id: str, items: list, image: str = None) -> None:
         """Update playlist with tracks and cover image"""

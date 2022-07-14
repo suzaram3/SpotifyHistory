@@ -1,19 +1,14 @@
-import logging
-import logging.config
-
+from config import DevelopmentConfig, ProductionConfig
 from models import Artist, Album, Song, SongStreamed
 from session import SessionHandler
 from spotify import SpotifyHandler
 from transform import TransformData
 
-logging.config.fileConfig("/home/msuzara/SpotifyHistory/logging.conf")
-file_logger = logging.getLogger("file")
-console_logger = logging.getLogger("console")
-
 
 def etl() -> None:
     """Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
     # setup
+    prod = ProductionConfig
     sh, sp, td = SessionHandler(), SpotifyHandler(), TransformData()
 
     # fetch
@@ -33,14 +28,14 @@ def etl() -> None:
         {"model": Album, "records": record_insert_list[0]},
     ]
 
-    with sh.session_scope() as session:
+    with sh.session_scope(prod.engine) as session:
         pre_insert = [
             sh.get_table_count(session, model["model"]) for model in record_dicts
         ]
         results = [sh.insert_many(session, model) for model in record_dicts]
 
     [
-        file_logger.info(
+        prod.file_logger.info(
             f"{x['count'] - y['count']} rows added to {x['model'].__tablename__}"
         )
         for x, y in zip(results, pre_insert)

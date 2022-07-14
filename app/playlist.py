@@ -3,54 +3,36 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-04-14
 Purpose: Main driver for updating top 100 songs
 """
-import base64, configparser, logging, logging.config
-
+import base64
+from collections import Counter
 from sqlalchemy.orm import sessionmaker
 from session import SessionHandler
 
-from db import DB
+from config import ProductionConfig
 from models import SongStreamed
 from spotify import SpotifyHandler
-
-config = configparser.ConfigParser()
-config.read(
-    "/home/msuzara/SpotifyHistory/spotify.conf"
-)
-logging.config.fileConfig(
-    "/home/msuzara/SpotifyHistory/logging.conf"
-)
-console_logger = logging.getLogger("console")
-file_logger = logging.getLogger("playlist")
-
-
-# def img_base64(in_file: str) -> str:
-#     """Geneate base64 string from thumbnail image file"""
-#     with open(in_file, "rb") as img_file:
-#         return base64.b64encode(img_file.read())
 
 
 # def playlist_driver() -> None:
 """Main function to update the top 100 songs playlist: updates track list and cover image"""
-sh, sp = SessionHandler(), SpotifyHandler()
+pc, sh, sp = ProductionConfig(), SessionHandler(), SpotifyHandler()
 
-with sh.session_scope() as session:
-    counts = sh.get_top_records(session, SongStreamed.song_id, 200)
-
-with open(config["spotify"]["top_100_cover_image"], "rb") as img_file:
+with open(pc.config["spotify"]["top_100_cover_image"], "rb") as img_file:
     image_str = base64.b64encode(img_file.read())
 
+with sh.session_scope(pc.engine) as session:
+    counts = sh.get_top_song_ids(session, 300)
+
 song_ids = [song[0] for song in counts]
-chunked_ids = [song_ids[i : i + 100] for i in range(0, len(song_ids), 100)]
 
+chunked_ids = [song_ids[_ : _ + 100] for _ in range(0, len(song_ids), 100)]
 
-items = {
-    "playlist_id": config["spotify"]["top_100"],
-    "items": chunked_ids[0],
-    "image": image_str,
-}
+sp.update_playlist(
+    pc.config["spotify"]["top_songs_playlist_id"], chunked_ids[0], image_str
+)
+sp.playlist_append(pc.config["spotify"]["top_songs_playlist_id"], chunked_ids[1], 100)
+sp.playlist_append(pc.config["spotify"]["top_songs_playlist_id"], chunked_ids[2], 200)
 
-sp.update_playlist(**items)
-
-sp.playlist_append(items['playlist_id'], chunked_ids[1])
-
-file_logger.info(f"Playlist: {items['playlist_id']} updated.")
+pc.file_logger.info(
+    f"Playlist: {pc.config['spotify']['top_songs_playlist_id']} updated."
+)
