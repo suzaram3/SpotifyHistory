@@ -24,11 +24,11 @@ class Config:
 
 class DevelopmentConfig(Config):
     file_logger = logging.getLogger("qa")
-    db = DB(Config.config["qa"]["db_uri"])
+    db = DB(Config.config["qa"])
     engine = db.engine
 
 
 class ProductionConfig(Config):
     file_logger = logging.getLogger("file")
-    db = DB(Config.config["prod"]["db_uri"])
+    db = DB(Config.config["prod"])
     engine = db.engine

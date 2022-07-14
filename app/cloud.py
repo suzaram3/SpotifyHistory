@@ -105,7 +105,7 @@ top_song_frequencies = {song[0]: song[1] for song in top_song_list}
 
 # random mask image
 options = [option for option in pc.config["mask_images"]]
-random_mask = random.choice(options)
+#random_mask = random.choice(options)
 
 
 # generate word clouds and thumbnails
@@ -116,7 +116,7 @@ pool = [
         args=(
             top_artist_frequencies,
             pc.config["file_paths"]["top_artists_image"],
-            pc.config["mask_images"][random_mask],
+            pc.config["mask_images"][random.choice(options)],
             False,
         ),
     ),
@@ -125,7 +125,7 @@ pool = [
         args=(
             top_song_frequencies,
             pc.config["file_paths"]["top_songs_image"],
-            pc.config["mask_images"][random_mask],
+            pc.config["mask_images"][random.choice(options)],
             False,
         ),
     ),
@@ -134,7 +134,7 @@ pool = [
         args=(
             top_artist_frequencies,
             pc.config["file_paths"]["top_artists_image_multi"],
-            pc.config["mask_images"][random_mask],
+            pc.config["mask_images"][random.choice(options)],
             True,
         ),
     ),
@@ -143,7 +143,7 @@ pool = [
         args=(
             top_song_frequencies,
             pc.config["file_paths"]["top_songs_image_multi"],
-            pc.config["mask_images"][random_mask],
+            pc.config["mask_images"][random.choice(options)],
             True,
         ),
     ),
