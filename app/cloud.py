@@ -6,18 +6,15 @@ Purpose: Generate word cloud from top artists in data warehouse
 import csv
 import os
 import random
-import sys
 import time
+from matplotlib import artist
 import matplotlib.pyplot as plt
 import numpy as np
-
-from configparser import ConfigParser, ExtendedInterpolation
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 from PIL import Image
+from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
-
-from config import ProductionConfig
-from session import SessionHandler
+from qa_config import Config, Session
 
 
 def grey_color_func(
@@ -25,17 +22,6 @@ def grey_color_func(
 ) -> str:
     """Returns grey color for word cloud font"""
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
-
-
-def csv_frequency(file_path: str) -> dict:
-    """Read CSV file and returns a dict of frequencies"""
-    frequency_dict = {}
-    with open(file_path, newline="") as csvfile:
-        music_reader = csv.reader(csvfile, delimiter="|")
-        next(music_reader, None)
-        for k, v in music_reader:
-            frequency_dict[k] = int(v)
-    return frequency_dict
 
 
 def generate_word_cloud(
@@ -47,7 +33,7 @@ def generate_word_cloud(
 
     wc = WordCloud(
         background_color="black",
-        font_path=pc.config["mask_fonts"]["epoxy"],
+        font_path=c.config["mask_fonts"]["epoxy"],
         mask=mask,
         max_font_size=256,
     ).generate_from_frequencies(frequency_dict)
@@ -89,24 +75,58 @@ def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
 
 
 # setup
-tic = time.perf_counter()
-pc = ProductionConfig()
-sh = SessionHandler()
+c = Config()
 
 # query top artists and songs
-with sh.session_scope(pc.engine) as session:
-    top_song_list = sh.get_top_song_names(session)
-    top_artist_list = sh.get_top_artists(session)
+with Session() as session:
+    top_song_list = (
+        session.query(
+            c.models["Song"].name, func.count(c.models["SongStreamed"].song_id)
+        )
+        .join(
+            c.models["Song"],
+            c.models["Song"].id == c.models["SongStreamed"].song_id,
+        )
+        .group_by(c.models["SongStreamed"].song_id, c.models["Song"].name)
+        .order_by(func.count(c.models["SongStreamed"].song_id).desc())
+        .all()
+    )
 
-top_artist_frequencies = {artist[0]: artist[1] for artist in top_artist_list}
+    top_artist_list = (
+        session.query(c.models["Artist"].name, func.count(c.models["Artist"].id))
+        .join(
+            c.models["Song"],
+            c.models["Song"].artist_id == c.models["Artist"].id,
+            isouter=True,
+        )
+        .join(
+            c.models["SongStreamed"],
+            c.models["SongStreamed"].song_id == c.models["Song"].id,
+            isouter=True,
+        )
+        .group_by(c.models["Artist"].id, c.models["Artist"].name)
+        .order_by(func.count(c.models["Artist"].id).desc())
+        .all()
+    )
 
-top_song_frequencies = {song[0]: song[1] for song in top_song_list}
+top_artist_average = sum([artist[1] for artist in top_artist_list]) // len(
+    top_artist_list
+)
+top_artist_frequencies = {
+    artist[0]: artist[1] for artist in top_artist_list if artist[1] > 23
+}
 
+top_song_average = sum([song[1] for song in top_song_list]) // len(top_artist_list)
+top_song_frequencies = {song[0]: song[1] for song in top_song_list if song[1] > 23}
 
 # random mask image
+<<<<<<< HEAD
 options = [option for option in pc.config["mask_images"]]
 #random_mask = random.choice(options)
 
+=======
+options = [option for option in c.config["mask_images"]]
+>>>>>>> major_refactor
 
 # generate word clouds and thumbnails
 cpu = os.cpu_count()
@@ -115,8 +135,13 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_artist_frequencies,
+<<<<<<< HEAD
             pc.config["file_paths"]["top_artists_image"],
             pc.config["mask_images"][random.choice(options)],
+=======
+            c.config["file_paths"]["top_artists_image"],
+            c.config["mask_images"][random.choice(options)],
+>>>>>>> major_refactor
             False,
         ),
     ),
@@ -124,8 +149,13 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_song_frequencies,
+<<<<<<< HEAD
             pc.config["file_paths"]["top_songs_image"],
             pc.config["mask_images"][random.choice(options)],
+=======
+            c.config["file_paths"]["top_songs_image"],
+            c.config["mask_images"][random.choice(options)],
+>>>>>>> major_refactor
             False,
         ),
     ),
@@ -133,8 +163,13 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_artist_frequencies,
+<<<<<<< HEAD
             pc.config["file_paths"]["top_artists_image_multi"],
             pc.config["mask_images"][random.choice(options)],
+=======
+            c.config["file_paths"]["top_artists_image_multi"],
+            c.config["mask_images"][random.choice(options)],
+>>>>>>> major_refactor
             True,
         ),
     ),
@@ -142,8 +177,13 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_song_frequencies,
+<<<<<<< HEAD
             pc.config["file_paths"]["top_songs_image_multi"],
             pc.config["mask_images"][random.choice(options)],
+=======
+            c.config["file_paths"]["top_songs_image_multi"],
+            c.config["mask_images"][random.choice(options)],
+>>>>>>> major_refactor
             True,
         ),
     ),
@@ -154,7 +194,6 @@ for p in pool:
 for p in pool:
     p.join()
 
-generate_thumbnail(pc.config["file_paths"]["top_artists_image"])
-generate_thumbnail(pc.config["file_paths"]["top_songs_image"])
-
-pc.console_logger.info(f"Completed in {time.perf_counter() - tic} seconds")
+# generate thumbnails
+generate_thumbnail(c.config["file_paths"]["top_artists_image"])
+generate_thumbnail(c.config["file_paths"]["top_songs_image"])

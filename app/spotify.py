@@ -75,6 +75,10 @@ class SpotifyHandler:
         """Return track data"""
         return self.sp.track(track_id)
 
+    def get_tracks_bulk(self, song_ids: list) -> dict:
+        """Return bulk track data"""
+        return self.sp.tracks(song_ids)
+
     def playlist_append(self, playlist_id: str, items: list, index: int) -> None:
         """Update playlist with tracks and cover image"""
         self.sp.playlist_add_items(playlist_id, items, index)

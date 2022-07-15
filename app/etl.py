@@ -1,46 +1,55 @@
-from config import DevelopmentConfig, ProductionConfig
-from models import Artist, Album, Song, SongStreamed
-from session import SessionHandler
+from qa_config import Config, Session
 from spotify import SpotifyHandler
 from transform import TransformData
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 
-def etl() -> None:
-    """Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
-    # setup
-    prod = ProductionConfig
-    sh, sp, td = SessionHandler(), SpotifyHandler(), TransformData()
+def get_table_counts(session: Session, model: object) -> dict:
+    return {"model": model, "table_count": session.query(model).count()}
 
-    # fetch
-    spotify_response = sp.get_recently_played()
 
-    # transform
-    transform_raw_data = [td.transform_data(item) for item in spotify_response["items"]]
-    record_insert_list = td.compile_model_lists(transform_raw_data)
+"""Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
+# setup
+c, sp, td = Config(), SpotifyHandler(), TransformData()
 
-    record_dicts = [
-        {
-            "model": Artist,
-            "records": record_insert_list[1],
-        },
-        {"model": Song, "records": record_insert_list[2]},
-        {"model": SongStreamed, "records": record_insert_list[3]},
-        {"model": Album, "records": record_insert_list[0]},
-    ]
+# fetch
+spotify_response = sp.get_recently_played()
 
-    with sh.session_scope(prod.engine) as session:
-        pre_insert = [
-            sh.get_table_count(session, model["model"]) for model in record_dicts
+# transform
+transform_raw_data = [td.transform_data(item) for item in spotify_response["items"]]
+record_insert_list = td.compile_model_lists(transform_raw_data)
+
+# compile table dicts
+record_dicts = [
+    {
+        "model": c.models["Artist"],
+        "records": record_insert_list[1],
+    },
+    {"model": c.models["Song"], "records": record_insert_list[2]},
+    {"model": c.models["SongStreamed"], "records": record_insert_list[3]},
+    {"model": c.models["Album"], "records": record_insert_list[0]},
+]
+
+#[print(F"{record['model']=}") for record in record_dicts]
+test = record_dicts[0]
+
+[print(F"{record} : {chunk['model']}") for chunk in record_dicts for record in chunk["records"]]
+
+# get pre counts, add records, and get post counts
+with Session() as session:
+    pre_insert = [get_table_counts(session, c.models[model]) for model in c.models]
+    statements = [
+            pg_insert(chunk["model"]).values(record).on_conflict_do_nothing()
+            for chunk in record_dicts for record in chunk["records"]
         ]
-        results = [sh.insert_many(session, model) for model in record_dicts]
+    [session.execute(statement) for statement in statements]
+    post_insert = [get_table_counts(session, c.models[model]) for model in c.models]
 
-    [
-        prod.file_logger.info(
-            f"{x['count'] - y['count']} rows added to {x['model'].__tablename__}"
-        )
-        for x, y in zip(results, pre_insert)
-        if x["count"] > y["count"]
-    ]
-
-
-etl()
+# log amount of records loaded
+[
+    c.file_logger.info(
+        f"{post['table_count'] - pre['table_count']} rows added to {post['model'].__tablename__}"
+    )
+    for post, pre in zip(post_insert, pre_insert)
+    if post["table_count"] > pre["table_count"]
+]
