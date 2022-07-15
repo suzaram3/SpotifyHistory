@@ -3,18 +3,15 @@ Author : Mitch Suzara <suzaram3@gmail.com>
 Date   : 2022-05-12
 Purpose: Generate word cloud from top artists in data warehouse
 """
-import csv
 import os
 import random
-import time
-from matplotlib import artist
 import matplotlib.pyplot as plt
 import numpy as np
 from multiprocessing import Process
 from PIL import Image
 from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
-from qa_config import Config, Session
+from config import Config, Session
 
 
 def grey_color_func(

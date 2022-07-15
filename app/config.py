@@ -1,11 +1,12 @@
 import configparser
 from configparser import ExtendedInterpolation
+from contextlib import contextmanager
 import logging
 import logging.config
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from models.models import Album, Artist, Song, SongStreamed
+from models import Album, Artist, Song, SongStreamed
 
 
 class Config:
@@ -23,7 +24,7 @@ class Config:
     # logging setup
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
-    file_logger = logging.getLogger("qa")
+    file_logger = logging.getLogger("prod")
 
     models = {
         "Album": Album,
@@ -32,6 +33,19 @@ class Config:
         "SongStreamed": SongStreamed,
     }
 
+    engine = create_engine(config["prod"]["db_uri"])
+    Session = sessionmaker(engine)
 
-engine = create_engine(Config.config["prod"]["db_uri"])
-Session = sessionmaker(bind=engine)
+    @contextmanager
+    def session_scope(self):
+        session = Config.Session()
+        try:
+            yield session
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            Config.file_logger.error("rollback transaction")
+            Config.file_logger.error(f"{e}")
+            raise
+        finally:
+            session.close()

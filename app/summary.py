@@ -1,9 +1,9 @@
 from sqlalchemy import cast, Date, func
-from qa_config import Config, Session
+from config import Config
 
 c = Config()
 
-with Session() as session:
+with c.session_scope() as session:
     table_counts = [{key: session.query(c.models[key]).count()} for key in c.models]
     stream_count_per_day = (
         session.query(

@@ -4,10 +4,7 @@ Date   : 2022-04-14
 Purpose: Main driver for updating top 100 songs
 """
 import base64
-from sqlalchemy import cast, Date, func, select
-from sqlalchemy.orm import sessionmaker
-
-from qa_config import Config, Session
+from config import Config, Session
 from spotify import SpotifyHandler
 
 
