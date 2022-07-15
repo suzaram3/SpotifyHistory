@@ -37,6 +37,4 @@ sp.update_playlist(
 sp.playlist_append(c.config["spotify"]["top_songs_playlist_id"], chunked_ids[1], 100)
 sp.playlist_append(c.config["spotify"]["top_songs_playlist_id"], chunked_ids[2], 200)
 
-c.file_logger.info(
-    f"Playlist: {c.config['spotify']['top_songs_playlist_id']} updated."
-)
+c.file_logger.info(f"Playlist: {c.config['spotify']['top_songs_playlist_id']} updated.")

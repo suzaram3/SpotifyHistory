@@ -1,7 +1,7 @@
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from qa_config import Config, Session
 from spotify import SpotifyHandler
 from transform import TransformData
-from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 
 def get_table_counts(session: Session, model: object) -> dict:
@@ -30,18 +30,23 @@ record_dicts = [
     {"model": c.models["Album"], "records": record_insert_list[0]},
 ]
 
-#[print(F"{record['model']=}") for record in record_dicts]
+# [print(F"{record['model']=}") for record in record_dicts]
 test = record_dicts[0]
 
-[print(F"{record} : {chunk['model']}") for chunk in record_dicts for record in chunk["records"]]
+[
+    print(f"{record} : {chunk['model']}")
+    for chunk in record_dicts
+    for record in chunk["records"]
+]
 
 # get pre counts, add records, and get post counts
 with Session() as session:
     pre_insert = [get_table_counts(session, c.models[model]) for model in c.models]
     statements = [
-            pg_insert(chunk["model"]).values(record).on_conflict_do_nothing()
-            for chunk in record_dicts for record in chunk["records"]
-        ]
+        pg_insert(chunk["model"]).values(record).on_conflict_do_nothing()
+        for chunk in record_dicts
+        for record in chunk["records"]
+    ]
     [session.execute(statement) for statement in statements]
     post_insert = [get_table_counts(session, c.models[model]) for model in c.models]
 

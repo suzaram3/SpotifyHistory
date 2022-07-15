@@ -120,13 +120,7 @@ top_song_average = sum([song[1] for song in top_song_list]) // len(top_artist_li
 top_song_frequencies = {song[0]: song[1] for song in top_song_list if song[1] > 23}
 
 # random mask image
-<<<<<<< HEAD
-options = [option for option in pc.config["mask_images"]]
-#random_mask = random.choice(options)
-
-=======
 options = [option for option in c.config["mask_images"]]
->>>>>>> major_refactor
 
 # generate word clouds and thumbnails
 cpu = os.cpu_count()
@@ -135,13 +129,8 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_artist_frequencies,
-<<<<<<< HEAD
-            pc.config["file_paths"]["top_artists_image"],
-            pc.config["mask_images"][random.choice(options)],
-=======
             c.config["file_paths"]["top_artists_image"],
             c.config["mask_images"][random.choice(options)],
->>>>>>> major_refactor
             False,
         ),
     ),
@@ -149,13 +138,8 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_song_frequencies,
-<<<<<<< HEAD
-            pc.config["file_paths"]["top_songs_image"],
-            pc.config["mask_images"][random.choice(options)],
-=======
             c.config["file_paths"]["top_songs_image"],
             c.config["mask_images"][random.choice(options)],
->>>>>>> major_refactor
             False,
         ),
     ),
@@ -163,13 +147,8 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_artist_frequencies,
-<<<<<<< HEAD
-            pc.config["file_paths"]["top_artists_image_multi"],
-            pc.config["mask_images"][random.choice(options)],
-=======
             c.config["file_paths"]["top_artists_image_multi"],
             c.config["mask_images"][random.choice(options)],
->>>>>>> major_refactor
             True,
         ),
     ),
@@ -177,13 +156,8 @@ pool = [
         target=generate_word_cloud,
         args=(
             top_song_frequencies,
-<<<<<<< HEAD
-            pc.config["file_paths"]["top_songs_image_multi"],
-            pc.config["mask_images"][random.choice(options)],
-=======
             c.config["file_paths"]["top_songs_image_multi"],
             c.config["mask_images"][random.choice(options)],
->>>>>>> major_refactor
             True,
         ),
     ),

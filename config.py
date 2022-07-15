@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 from models.models import Album, Artist, Song, SongStreamed
 
 
-
 class Config:
 
     # conf files
@@ -32,6 +31,7 @@ class Config:
         "Song": Song,
         "SongStreamed": SongStreamed,
     }
+
 
 engine = create_engine(Config.config["prod"]["db_uri"])
 Session = sessionmaker(bind=engine)
