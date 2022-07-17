@@ -4,15 +4,18 @@ Date   : 2022-04-14
 Purpose: Main driver for updating top 100 songs
 """
 import base64
-from config import Config, Session
-from spotify import SpotifyHandler
+from sqlalchemy import cast, Date, func, select
+from sqlalchemy.orm import sessionmaker
+
+from SpotifyHistory.config import Config
+from .spotify import SpotifyHandler
 
 
 # def playlist_driver() -> None:
 """Main function to update the top 100 songs playlist: updates track list and cover image"""
 c, sp = Config(), SpotifyHandler()
 
-with Session() as session:
+with c.session_scope() as session:
     tuples = (
         session.query(c.models["SongStreamed"].song_id)
         .group_by(c.models["SongStreamed"].song_id)

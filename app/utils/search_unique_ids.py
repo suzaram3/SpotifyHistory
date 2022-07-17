@@ -1,7 +1,7 @@
 import json
 import os
 from multiprocessing import Process, Queue
-from config import Config
+from SpotifyHistory.config import Config
 from spotify import SpotifyHandler
 from sqlalchemy import distinct
 
@@ -12,7 +12,7 @@ def chunk_list(lst: list) -> list[list]:
 
 def get_tracks(**kwargs) -> list[dict]:
     response = [sp.get_tracks_bulk(chunk) for chunk in kwargs["ids"]]
-    #response = sp.get_tracks_bulk(kwargs['ids'][0]) 
+    # response = sp.get_tracks_bulk(kwargs['ids'][0])
     q.put(response)
 
 
