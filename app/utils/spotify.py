@@ -1,8 +1,3 @@
-"""
-Author : Mitch Suzara <suzaram3@gmail.com>
-Date   : 2022-04-14
-Purpose: Spotify handler for setting up Spotipy 
-"""
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from SpotifyHistory.config import Config
