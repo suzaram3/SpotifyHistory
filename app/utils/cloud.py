@@ -11,7 +11,7 @@ from multiprocessing import Process
 from PIL import Image
 from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
-from config import Config, Session
+from SpotifyHistory.config import Config
 
 
 def grey_color_func(
@@ -21,21 +21,19 @@ def grey_color_func(
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
 
 
-def generate_word_cloud(
-    frequency_dict: dict, file_path: str, mask_image: str, multi_flag: bool
-) -> None:
+def generate_word_cloud(**kwargs) -> Image:
     """Generates a multi plot word cloud from frequency_dict,
     and mask_image. Stores result in file_path"""
-    mask = np.array(Image.open(mask_image))
+    mask = np.array(Image.open(kwargs["mask_image"]))
 
     wc = WordCloud(
         background_color="black",
         font_path=c.config["mask_fonts"]["epoxy"],
         mask=mask,
-        max_font_size=256,
-    ).generate_from_frequencies(frequency_dict)
+        # max_font_size=256,
+    ).generate_from_frequencies(kwargs["freq_dict"])
 
-    if multi_flag:
+    if kwargs["multi_flag"]:
         image_colors = ImageColorGenerator(mask)
         fig, axes = plt.subplots(1, 3)
         axes[0].imshow(wc, interpolation="bilinear")
@@ -45,7 +43,7 @@ def generate_word_cloud(
             ax.set_axis_off()
         plt.axis("off")
         plt.savefig(
-            file_path,
+            kwargs["outfile_path"],
             bbox_inches="tight",
             pad_inches=0,
             dpi=1200,
@@ -57,25 +55,28 @@ def generate_word_cloud(
         )
         plt.axis("off")
         plt.savefig(
-            file_path,
+            kwargs["outfile_path"],
             bbox_inches="tight",
             pad_inches=0,
             dpi=1200,
         )
 
 
-def generate_thumbnail(in_file: str, size=(1024, 1024)) -> None:
+def generate_thumbnail(in_file: str, size=(512, 512)) -> None:
     """Generates a thumbnail image from the word cloud plot"""
-    with Image.open(in_file) as tn:
-        tn.thumbnail(size)
-        tn.copy().save(f"{in_file}.thumbnail", "JPEG")
+    try:
+        with Image.open(in_file) as tn:
+            tn.thumbnail(size)
+            tn.copy().save(f"{in_file}.thumbnail", "PNG")
+    except FileNotFoundError as e:
+        c.file_logger.error(f"No file found at {in_file}...")
 
 
 # setup
 c = Config()
 
 # query top artists and songs
-with Session() as session:
+with c.session_scope() as session:
     top_song_list = (
         session.query(
             c.models["Song"].name, func.count(c.models["SongStreamed"].song_id)
@@ -124,39 +125,39 @@ cpu = os.cpu_count()
 pool = [
     Process(
         target=generate_word_cloud,
-        args=(
-            top_artist_frequencies,
-            c.config["file_paths"]["top_artists_image"],
-            c.config["mask_images"][random.choice(options)],
-            False,
-        ),
+        kwargs={
+            "freq_dict": top_artist_frequencies,
+            "outfile_path": c.config["file_paths"]["top_artists_image"],
+            "mask_image": c.config["mask_images"][random.choice(options)],
+            "multi_flag": False,
+        },
     ),
     Process(
         target=generate_word_cloud,
-        args=(
-            top_song_frequencies,
-            c.config["file_paths"]["top_songs_image"],
-            c.config["mask_images"][random.choice(options)],
-            False,
-        ),
+        kwargs={
+            "freq_dict": top_artist_frequencies,
+            "outfile_path": c.config["file_paths"]["top_artists_image_multi"],
+            "mask_image": c.config["mask_images"][random.choice(options)],
+            "multi_flag": True,
+        },
     ),
     Process(
         target=generate_word_cloud,
-        args=(
-            top_artist_frequencies,
-            c.config["file_paths"]["top_artists_image_multi"],
-            c.config["mask_images"][random.choice(options)],
-            True,
-        ),
+        kwargs={
+            "freq_dict": top_song_frequencies,
+            "outfile_path": c.config["file_paths"]["top_songs_image"],
+            "mask_image": c.config["mask_images"][random.choice(options)],
+            "multi_flag": False,
+        },
     ),
     Process(
         target=generate_word_cloud,
-        args=(
-            top_song_frequencies,
-            c.config["file_paths"]["top_songs_image_multi"],
-            c.config["mask_images"][random.choice(options)],
-            True,
-        ),
+        kwargs={
+            "freq_dict": top_song_frequencies,
+            "outfile_path": c.config["file_paths"]["top_songs_image_multi"],
+            "mask_image": c.config["mask_images"][random.choice(options)],
+            "multi_flag": True,
+        },
     ),
 ]
 for p in pool:

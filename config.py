@@ -6,7 +6,7 @@ import logging.config
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from models import Album, Artist, Song, SongStreamed
+from .models.models import Album, Artist, Song, SongStreamed
 
 
 class Config:
@@ -16,7 +16,7 @@ class Config:
     config.read(
         [
             "/home/msuzara/SpotifyHistory/settings/db.conf",
-            "/home/msuzara/SpotifyHistory/settings/settings.conf",
+            "/home/msuzara/SpotifyHistory/settings/file_paths.conf",
             "/home/msuzara/SpotifyHistory/settings/spotify.conf",
         ]
     )

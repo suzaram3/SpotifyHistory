@@ -5,7 +5,7 @@ Purpose: Spotify handler for setting up Spotipy
 """
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from config import Config
+from SpotifyHistory.config import Config
 
 
 c = Config()
@@ -13,27 +13,19 @@ credentials = dict(c.config["spotify"])
 
 
 class SpotifyHandler:
-    __instance = None
-
     def __init__(self) -> None:
-        """Virtually private constructor"""
-
-        if SpotifyHandler.__instance is not None:
-            raise Exception("This class is a singleton")
-        else:
-            SpotifyHandler.__instance = self
-            self.sp = spotipy.Spotify(
-                auth_manager=SpotifyOAuth(
-                    cache_path=credentials["cache_path"],
-                    client_id=credentials["spotipy_client_id"],
-                    client_secret=credentials["spotipy_client_secret"],
-                    open_browser=False,
-                    redirect_uri=credentials["redirect_uri"],
-                    scope=credentials["scope"],
-                ),
-                requests_timeout=10,
-                retries=5,
-            )
+        self.sp = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(
+                cache_path=credentials["cache_path"],
+                client_id=credentials["client_id"],
+                client_secret=credentials["client_secret"],
+                open_browser=False,
+                redirect_uri=credentials["redirect_uri"],
+                scope=credentials["scope"],
+            ),
+            requests_timeout=10,
+            retries=5,
+        )
 
     def create_playlist(
         self, user: str, name: str, public: bool = True, description: str = ""

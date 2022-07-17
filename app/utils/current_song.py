@@ -1,4 +1,4 @@
-from spotify import SpotifyHandler
+from .spotify import SpotifyHandler
 
 
 spotify = SpotifyHandler()

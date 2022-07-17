@@ -1,10 +1,10 @@
 from sqlalchemy.dialects.postgresql import insert as pg_insert
-from config import Config
-from spotify import SpotifyHandler
-from transform import TransformData
+from SpotifyHistory.config import Config
+from SpotifyHistory.app.utils.spotify import SpotifyHandler
+from . transform import TransformData
 
 
-def get_table_counts(session: object, model: object) -> dict:
+def get_table_counts(session: Config.Session, model: object) -> dict:
     return {"model": model, "table_count": session.query(model).count()}
 
 
@@ -39,7 +39,6 @@ with c.session_scope() as session:
         for record in chunk["records"]
     ]
     [session.execute(statement) for statement in statements]
-
     post_insert = [get_table_counts(session, c.models[model]) for model in c.models]
 
 # log amount of records loaded
