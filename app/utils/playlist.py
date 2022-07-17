@@ -1,8 +1,3 @@
-"""
-Author : Mitch Suzara <suzaram3@gmail.com>
-Date   : 2022-04-14
-Purpose: Main driver for updating top 100 songs
-"""
 import base64
 from sqlalchemy import cast, Date, func, select
 from sqlalchemy.orm import sessionmaker

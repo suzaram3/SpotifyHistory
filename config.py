@@ -6,7 +6,7 @@ import logging.config
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from .models.models import Album, Artist, Song, SongStreamed
+from .models.models import Album, Artist, Song, SongStreamed, Token, create
 
 
 class Config:
@@ -31,14 +31,15 @@ class Config:
         "Artist": Artist,
         "Song": Song,
         "SongStreamed": SongStreamed,
+        "Token": Token,
     }
 
     engine = create_engine(config["prod"]["db_uri"])
-    Session = sessionmaker(engine)
 
     @contextmanager
     def session_scope(self):
-        session = Config.Session()
+        Session = sessionmaker(Config.engine, expire_on_commit=False)
+        session = Session()
         try:
             yield session
             session.commit()
@@ -48,4 +49,5 @@ class Config:
             Config.file_logger.error(f"{e}")
             raise
         finally:
+            session.expunge_all()
             session.close()

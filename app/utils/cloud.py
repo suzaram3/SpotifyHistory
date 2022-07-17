@@ -1,8 +1,3 @@
-"""
-Author : Mitch Suzara <suzaram3@gmail.com>
-Date   : 2022-05-12
-Purpose: Generate word cloud from top artists in data warehouse
-"""
 import os
 import random
 import matplotlib.pyplot as plt

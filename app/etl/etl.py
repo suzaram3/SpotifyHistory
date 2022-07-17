@@ -4,11 +4,9 @@ from SpotifyHistory.app.utils.spotify import SpotifyHandler
 from . transform import TransformData
 
 
-def get_table_counts(session: Config.Session, model: object) -> dict:
+def get_table_counts(session: object, model: object) -> dict:
     return {"model": model, "table_count": session.query(model).count()}
 
-
-"""Main function for the etl program: gets recent songs and inserts them into the music.extract table"""
 # setup
 c, sp, td = Config(), SpotifyHandler(), TransformData()
 
