@@ -1,5 +1,5 @@
 class TransformData:
-    def transform_data(self, raw_track_data=list) -> dict:
+    def transform_data(self, raw_track_data: list) -> dict:
         """Return dict of desired json data"""
         return {
             "song_id": raw_track_data["track"]["id"],
