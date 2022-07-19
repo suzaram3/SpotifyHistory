@@ -1,9 +1,9 @@
 from datetime import date
 from sqlalchemy import cast, Date, func, select
 from SpotifyHistory.config import Config
+from SpotifyHistory.app.utils.queries import summary
 
 
-TODAY = date.today()  # .strftime("%Y-%m-%d")
 c = Config()
 instance = str(c.engine).split("/")[-1]
 
@@ -17,44 +17,27 @@ freq = {
     "Sunday": 0,
 }
 
-with c.session_scope() as session:
-    table_counts = [{key: session.query(c.models[key]).count()} for key in c.models]
-    stream_count_per_day = (
-        session.query(
-            func.count(cast(c.models["SongStreamed"].played_at, Date)),
-        )
-        .group_by(cast(c.models["SongStreamed"].played_at, Date))
-        .all()
-    )
-    freq_by_day = (
-        session.query(
-            cast(c.models["SongStreamed"].played_at, Date),
-            func.count(cast(c.models["SongStreamed"].played_at, Date)),
-        )
-        .group_by(cast(c.models["SongStreamed"].played_at, Date))
-        .order_by(cast(c.models["SongStreamed"].played_at, Date).desc())
-        .all()
-    )
-    play_today = (
-        session.query(func.count(c.models["SongStreamed"].song_id))
-        .filter(cast(c.models["SongStreamed"].played_at, Date) == TODAY)
-        .first()
-    )
+query_results = summary()
 
-
-average_streams_per_day = sum([row[0] for row in stream_count_per_day]) // len(
-    stream_count_per_day
-)
-
-
-for day in freq_by_day:
+average_streams_per_day = sum(
+    [row[0] for row in query_results["stream_count_per_day"]]
+) // len(query_results["stream_count_per_day"])
+for day in query_results["freq_by_day"]:
     freq[day[0].strftime("%A")] = freq.get(day[0].strftime("%A")) + day[1]
 
 print(f"\n**SpotifyData[{instance[:-1]}]**\n-Table Counts-")
-[print(f"{key}: {value:,}") for item in table_counts for key, value in item.items()]
+[
+    print(f"{model['model'].__name__}: {model['count']:,}")
+    for model in query_results["table_counts"]
+]
 print("\n*Day Frequency*")
 [print(f"{day}: {freq[day]:,}") for day in freq]
 print(f"\n*Miscellaneous Data*")
 print(f"average_streams_per_day : {average_streams_per_day}")
-print(f"Streams Today: {play_today[0]}")
+print(f"Streams Today: {query_results['play_today'][0]}")
+print(
+    f"TodayTopSong: {query_results['top_song_today'][0]} plays | {query_results['top_song_today'][1]} by {query_results['top_song_today'][2]}"
+)
+print(f"Streams This Year: {query_results['year_count']:,}")
+print(f"Streamed Time in Days: {(query_results['days'][0] // 1000) // 86400}")
 print()

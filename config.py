@@ -6,7 +6,7 @@ import logging.config
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from .models.models import Album, Artist, Song, SongStreamed, Token, create
+from .models.models import Album, Artist, Song, SongStreamed, create
 
 
 class Config:
@@ -25,13 +25,13 @@ class Config:
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
     file_logger = logging.getLogger("prod")
+    qa_file_logger = logging.getLogger("qa")
 
     models = {
         "Album": Album,
         "Artist": Artist,
         "Song": Song,
         "SongStreamed": SongStreamed,
-        "Token": Token,
     }
 
     engine = create_engine(config["prod"]["db_uri"])
@@ -51,3 +51,5 @@ class Config:
         finally:
             session.expunge_all()
             session.close()
+
+#create(Config().engine)

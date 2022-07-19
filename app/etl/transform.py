@@ -4,6 +4,7 @@ class TransformData:
         return {
             "song_id": raw_track_data["track"]["id"],
             "song_name": raw_track_data["track"]["name"],
+            "song_length": raw_track_data["track"]["duration_ms"],
             "artist_id": raw_track_data["track"]["artists"][0]["id"],
             "artist_name": raw_track_data["track"]["artists"][0]["name"],
             "album_id": raw_track_data["track"]["album"]["id"],
@@ -38,6 +39,7 @@ class TransformData:
                     "album_id": record["album_id"],
                     "artist_id": record["artist_id"],
                     "spotify_url": record["spotify_url"],
+                    "length": record["song_length"],
                 }
                 for record in data_list
             ],

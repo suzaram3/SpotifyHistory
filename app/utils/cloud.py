@@ -7,6 +7,7 @@ from PIL import Image
 from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
 from SpotifyHistory.config import Config
+from Spotify.app.utils.queries import cloud
 
 
 def grey_color_func(
@@ -71,44 +72,16 @@ def generate_thumbnail(in_file: str, size=(512, 512)) -> None:
 c = Config()
 
 # query top artists and songs
-with c.session_scope() as session:
-    top_song_list = (
-        session.query(
-            c.models["Song"].name, func.count(c.models["SongStreamed"].song_id)
-        )
-        .join(
-            c.models["Song"],
-            c.models["Song"].id == c.models["SongStreamed"].song_id,
-        )
-        .group_by(c.models["SongStreamed"].song_id, c.models["Song"].name)
-        .order_by(func.count(c.models["SongStreamed"].song_id).desc())
-        .all()
-    )
+query_results = cloud()
 
-    top_artist_list = (
-        session.query(c.models["Artist"].name, func.count(c.models["Artist"].id))
-        .join(
-            c.models["Song"],
-            c.models["Song"].artist_id == c.models["Artist"].id,
-            isouter=True,
-        )
-        .join(
-            c.models["SongStreamed"],
-            c.models["SongStreamed"].song_id == c.models["Song"].id,
-            isouter=True,
-        )
-        .group_by(c.models["Artist"].id, c.models["Artist"].name)
-        .order_by(func.count(c.models["Artist"].id).desc())
-        .all()
-    )
-
+top_artist_list = query_results["top_artist_list"]
+top_song_list = query_results["top_song_list"]
 top_artist_average = sum([artist[1] for artist in top_artist_list]) // len(
     top_artist_list
 )
 top_artist_frequencies = {
     artist[0]: artist[1] for artist in top_artist_list if artist[1] > 23
 }
-
 top_song_average = sum([song[1] for song in top_song_list]) // len(top_artist_list)
 top_song_frequencies = {song[0]: song[1] for song in top_song_list if song[1] > 23}
 

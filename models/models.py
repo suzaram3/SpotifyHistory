@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from email.policy import default
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import OperationalError
@@ -50,6 +51,7 @@ class Song(Base):
         String(32), ForeignKey(Artist.id, ondelete="CASCADE"), nullable=False
     )
     spotify_url: str = Column(String(64), nullable=False)
+    length: int = Column(Integer, default=0)
 
     __table_args__ = {"schema": "music"}
 
@@ -66,21 +68,21 @@ class SongStreamed(Base):
     __table_args__ = {"schema": "music"}
 
 
-@dataclass
-class Token(Base):
-    """Class to represent a record in the streams table"""
+# @dataclass
+# class Token(Base):
+#     """Class to represent a record in the streams table"""
 
-    __tablename__ = "token"
+#     __tablename__ = "token"
 
-    id: int = Column(Integer, primary_key=True)
-    token_type: str = Column(String(16), nullable=False)
-    access_token: str = Column(String(256), nullable=False)
-    refresh_token: str = Column(String(256), nullable=False)
-    expires_in: int = Column(Integer, nullable=False)
-    scope: str = Column(String(256))
+#     id: int = Column(Integer, primary_key=True)
+#     token_type: str = Column(String(16), nullable=False)
+#     access_token: str = Column(String(256), nullable=False)
+#     refresh_token: str = Column(String(256), nullable=False)
+#     expires_in: int = Column(Integer, nullable=False)
+#     scope: str = Column(String(256))
 
 
-    __table_args__ = {"schema": "config"}
+#     __table_args__ = {"schema": "config"}
 
 
 # create table if it does not exist, if you change the model,

@@ -2,28 +2,16 @@ import base64
 from sqlalchemy import cast, Date, func, select
 from sqlalchemy.orm import sessionmaker
 
-from SpotifyHistory.config import Config
 from .spotify import SpotifyHandler
+from SpotifyHistory.config import Config
+from SpotifyHistory.app.utils import playlist_query
 
 
-# def playlist_driver() -> None:
-"""Main function to update the top 100 songs playlist: updates track list and cover image"""
 c, sp = Config(), SpotifyHandler()
-
-with c.session_scope() as session:
-    tuples = (
-        session.query(c.models["SongStreamed"].song_id)
-        .group_by(c.models["SongStreamed"].song_id)
-        .order_by(func.count(c.models["SongStreamed"].song_id).desc())
-        .limit(300)
-        .all()
-    )
-
+query_results = playlist_query()
 with open(c.config["spotify"]["top_100_cover_image"], "rb") as img_file:
     image_str = base64.b64encode(img_file.read())
-
-song_ids = [song[0] for song in tuples]
-
+song_ids = [song[0] for song in query_results["top_songs"]]
 chunked_ids = [song_ids[_ : _ + 100] for _ in range(0, len(song_ids), 100)]
 
 sp.update_playlist(
