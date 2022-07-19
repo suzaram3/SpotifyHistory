@@ -24,8 +24,7 @@ class Config:
     # logging setup
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
-    file_logger = logging.getLogger("prod")
-    qa_file_logger = logging.getLogger("qa")
+    file_logger = logging.getLogger("qa")
 
     models = {
         "Album": Album,
@@ -34,7 +33,7 @@ class Config:
         "SongStreamed": SongStreamed,
     }
 
-    engine = create_engine(config["prod"]["db_uri"])
+    engine = create_engine(config["qa"]["db_uri"])
 
     @contextmanager
     def session_scope(self):
