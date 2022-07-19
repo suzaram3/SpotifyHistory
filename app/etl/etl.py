@@ -1,11 +1,10 @@
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from SpotifyHistory.config import Config
+from SpotifyHistory.models.models import Album, Artist, Song, SongStreamed
 from SpotifyHistory.app.utils.spotify import SpotifyHandler
-from . transform import TransformData
+from SpotifyHistory.app.utils.queries import load_tables, table_counts
+from .transform import TransformData
 
-
-def get_table_counts(session: object, model: object) -> dict:
-    return {"model": model, "table_count": session.query(model).count()}
 
 # setup
 c, sp, td = Config(), SpotifyHandler(), TransformData()
@@ -20,30 +19,22 @@ record_insert_list = td.compile_model_lists(transform_raw_data)
 # compile table dicts
 record_dicts = [
     {
-        "model": c.models["Artist"],
+        "model": Artist,
         "records": record_insert_list[1],
     },
-    {"model": c.models["Song"], "records": record_insert_list[2]},
-    {"model": c.models["SongStreamed"], "records": record_insert_list[3]},
-    {"model": c.models["Album"], "records": record_insert_list[0]},
+    {"model": Song, "records": record_insert_list[2]},
+    {"model": SongStreamed, "records": record_insert_list[3]},
+    {"model": Album, "records": record_insert_list[0]},
 ]
 
 # get pre counts, add records, and get post counts
-with c.session_scope() as session:
-    pre_insert = [get_table_counts(session, c.models[model]) for model in c.models]
-    statements = [
-        pg_insert(chunk["model"]).values(record).on_conflict_do_nothing()
-        for chunk in record_dicts
-        for record in chunk["records"]
-    ]
-    [session.execute(statement) for statement in statements]
-    post_insert = [get_table_counts(session, c.models[model]) for model in c.models]
+pre_insert = table_counts()
+load_tables(record_dicts)
+post_insert = table_counts()
 
 # log amount of records loaded
 [
-    c.file_logger.info(
-        f"{post['table_count'] - pre['table_count']} rows added to {post['model'].__tablename__}"
-    )
+    c.file_logger.info(f"{post['count'] - pre['count']} rows added to {post['model'].__name__}")
     for post, pre in zip(post_insert, pre_insert)
-    if post["table_count"] > pre["table_count"]
+    if post["count"] > pre["count"]
 ]
