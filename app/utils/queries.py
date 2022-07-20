@@ -1,6 +1,8 @@
 import datetime
+from contextlib import contextmanager
 from datetime import date
 from sqlalchemy import cast, Date, func, select
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.dialects import postgresql
 from SpotifyHistory.config import Config
@@ -10,8 +12,25 @@ c = Config()
 models = [Album, Artist, Song, SongStreamed]
 
 
+@contextmanager
+def session_scope():
+    Session = sessionmaker(c.engine, expire_on_commit=False)
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        Config.file_logger.error("rollback transaction")
+        Config.file_logger.error(f"{e}")
+        raise
+    finally:
+        session.expunge_all()
+        session.close()
+
+
 def cloud() -> dict:
-    with c.session_scope() as session:
+    with session_scope() as session:
         return {
             "top_song_list": session.query(Song.name, func.count(SongStreamed.song_id))
             .join(
@@ -39,12 +58,12 @@ def cloud() -> dict:
 
 
 def song_ids() -> list:
-    with c.session_scope() as session:
+    with session_scope() as session:
         return [id[0] for id in session.query(Song.id).all()]
 
 
 def load_tables(record_dicts: list) -> None:
-    with c.session_scope() as session:
+    with session_scope() as session:
         statements = [
             pg_insert(chunk["model"]).values(record).on_conflict_do_nothing()
             for chunk in record_dicts
@@ -54,7 +73,7 @@ def load_tables(record_dicts: list) -> None:
 
 
 def playlist() -> dict:
-    with c.session_scope() as session:
+    with session_scope() as session:
         return {
             "top_songs": session.query(SongStreamed.song_id)
             .group_by(SongStreamed.song_id)
@@ -67,7 +86,7 @@ def playlist() -> dict:
 def summary(year: datetime = int(datetime.datetime.today().strftime("%Y"))) -> dict:
     year_begin = datetime.datetime(year, 1, 1)
     year_end = datetime.datetime(year, 12, 31)
-    with c.session_scope() as session:
+    with session_scope() as session:
         return {
             "table_counts": table_counts(),
             "stream_count_per_day": (
@@ -128,12 +147,12 @@ def summary(year: datetime = int(datetime.datetime.today().strftime("%Y"))) -> d
 
 
 def table_counts() -> dict:
-    with c.session_scope() as session:
+    with session_scope() as session:
         return [
             {"model": model, "count": session.query(model).count()} for model in models
         ]
 
 
 def update(id: str, length: int) -> dict:
-    with c.session_scope() as session:
+    with session_scope() as session:
         (session.query(Song).filter(Song.id == id).update({Song.length: length}))
