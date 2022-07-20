@@ -24,31 +24,6 @@ class Config:
     # logging setup
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
-    file_logger = logging.getLogger("qa")
+    file_logger = logging.getLogger("prod")
 
-    models = {
-        "Album": Album,
-        "Artist": Artist,
-        "Song": Song,
-        "SongStreamed": SongStreamed,
-    }
-
-    engine = create_engine(config["qa"]["db_uri"])
-
-    @contextmanager
-    def session_scope(self):
-        Session = sessionmaker(Config.engine, expire_on_commit=False)
-        session = Session()
-        try:
-            yield session
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            Config.file_logger.error("rollback transaction")
-            Config.file_logger.error(f"{e}")
-            raise
-        finally:
-            session.expunge_all()
-            session.close()
-
-#create(Config().engine)
+    engine = create_engine(config["prod"]["db_uri"])
