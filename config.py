@@ -24,4 +24,4 @@ class Config:
     console_logger = logging.getLogger("console")
     file_logger = logging.getLogger("prod")
 
-    engine = create_engine(config["prod"]["db_uri"])
+    engine = create_engine(config["qa"]["db_uri"])
