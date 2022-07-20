@@ -25,19 +25,20 @@ average_streams_per_day = sum(
 for day in query_results["freq_by_day"]:
     freq[day[0].strftime("%A")] = freq.get(day[0].strftime("%A")) + day[1]
 
-print(f"\n**SpotifyData[{instance[:-1]}]**\n-TableCounts-")
+print(f"\n**SpotifyData[\033[1m{instance[:-1]}\033[0m]**\n-TableCounts-")
 [
     print(f"{model['model'].__name__}: {model['count']:,}")
     for model in query_results["table_counts"]
 ]
-print("\n*DayFrequency*")
+print("\n*TotalDayFrequency*")
 [print(f"{day}: {freq[day]:,}") for day in freq]
 print(f"\n*MiscellaneousData*")
 print(f"AverageStreamsPerDay : {average_streams_per_day}")
 print(f"StreamsToday: {query_results['play_today'][0]}")
-print(
-    f"TodayTopSong: {query_results['top_song_today'][0]} plays | \"{query_results['top_song_today'][1]}\" - \033[1m{query_results['top_song_today'][2]}\033[0m"
-)
+if query_results['top_song_today'][0] > 1:
+    print(
+        f"TodayTopSong: {query_results['top_song_today'][0]} plays | \"{query_results['top_song_today'][1]}\" - \033[1m{query_results['top_song_today'][2]}\033[0m"
+    )
 print(f"StreamsThisYear: {query_results['year_count']:,}")
-print(f"StreamedTimeInDays: {(query_results['days'][0] // 1000) // 86400}")
+print(f"StreamTimeInDays: {(query_results['days'][0] // 1000) // 86400}")
 print()

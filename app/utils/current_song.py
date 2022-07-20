@@ -3,7 +3,7 @@ from .spotify import SpotifyHandler
 
 spotify = SpotifyHandler()
 data = spotify.get_current_track()
-if data:
+if data['is_playing']:
     song_dict = {
         "song_id": data["item"]["id"],
         "song_name": data["item"]["name"],
