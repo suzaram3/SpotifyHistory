@@ -1,9 +1,7 @@
 import configparser
 from configparser import ExtendedInterpolation
-from contextlib import contextmanager
 import logging
 import logging.config
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 from .models.models import Album, Artist, Song, SongStreamed, create

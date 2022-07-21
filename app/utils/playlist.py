@@ -1,6 +1,4 @@
 import base64
-from sqlalchemy import cast, Date, func, select
-from sqlalchemy.orm import sessionmaker
 
 from .spotify import SpotifyHandler
 from SpotifyHistory.config import Config

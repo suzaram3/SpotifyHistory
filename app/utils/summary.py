@@ -35,7 +35,7 @@ print("\n*TotalDayFrequency*")
 print(f"\n*MiscellaneousData*")
 print(f"AverageStreamsPerDay : {average_streams_per_day}")
 print(f"StreamsToday: {query_results['play_today'][0]}")
-if query_results['top_song_today'][0] > 1:
+if query_results["top_song_today"][0] > 1:
     print(
         f"TodayTopSong: {query_results['top_song_today'][0]} plays | \"{query_results['top_song_today'][1]}\" - \033[1m{query_results['top_song_today'][2]}\033[0m"
     )

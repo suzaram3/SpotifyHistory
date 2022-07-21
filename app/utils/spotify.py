@@ -75,3 +75,6 @@ class SpotifyHandler:
         self.sp.playlist_replace_items(playlist_id, items)
         if image is not None:
             self.sp.playlist_upload_cover_image(playlist_id, image)
+
+    def update_playlist_details(self, playlist_id: str, desc: str) -> None:
+        self.sp.playlist_change_details(playlist_id=playlist_id, description=desc)

@@ -156,3 +156,24 @@ def table_counts() -> dict:
 def update(id: str, length: int) -> dict:
     with session_scope() as session:
         (session.query(Song).filter(Song.id == id).update({Song.length: length}))
+
+
+def yesterday_top_ten() -> dict:
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    with session_scope() as session:
+        return {
+            "date": yesterday,
+            "desc": f"Top 10 from {yesterday}",
+            "song_ids": [
+                song[1]
+                for song in session.query(
+                    func.count(SongStreamed.song_id), SongStreamed.song_id
+                )
+                .filter(cast(SongStreamed.played_at, Date) == yesterday)
+                .group_by(SongStreamed.song_id)
+                .order_by(func.count(SongStreamed.song_id).desc())
+                .having(func.count(SongStreamed.song_id) > 1)
+                .limit(10)
+                .all()
+            ],
+        }
