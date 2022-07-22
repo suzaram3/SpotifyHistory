@@ -10,7 +10,7 @@ from SpotifyHistory.models.models import Album, Artist, Song, SongStreamed
 
 
 c = Config()
-engine = create_engine(c.config["qa"]["db_uri"])
+engine = create_engine(c.config["prod"]["db_uri"])
 models = [Album, Artist, Song, SongStreamed]
 
 
