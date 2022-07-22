@@ -2,9 +2,6 @@ import configparser
 from configparser import ExtendedInterpolation
 import logging
 import logging.config
-from sqlalchemy import create_engine
-
-from .models.models import Album, Artist, Song, SongStreamed, create
 
 
 class Config:
@@ -23,5 +20,3 @@ class Config:
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
     file_logger = logging.getLogger("prod")
-
-    engine = create_engine(config["qa"]["db_uri"])

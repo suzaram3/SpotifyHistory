@@ -1,11 +1,11 @@
 from datetime import date
 from sqlalchemy import cast, Date, func, select
 from SpotifyHistory.config import Config
-from SpotifyHistory.app.utils.queries import summary
+from SpotifyHistory.app.utils.queries import summary, engine
 
 
 c = Config()
-instance = str(c.engine).split("/")[-1]
+instance = str(engine).split("/")[-1]
 
 freq = {
     "Monday": 0,

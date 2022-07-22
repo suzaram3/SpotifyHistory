@@ -1,20 +1,22 @@
 import datetime
 from contextlib import contextmanager
 from datetime import date
-from sqlalchemy import cast, Date, func, select
+from sqlalchemy import cast, create_engine, Date, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.dialects import postgresql
 from SpotifyHistory.config import Config
 from SpotifyHistory.models.models import Album, Artist, Song, SongStreamed
 
+
 c = Config()
+engine = create_engine(c.config["qa"]["db_uri"])
 models = [Album, Artist, Song, SongStreamed]
 
 
 @contextmanager
 def session_scope():
-    Session = sessionmaker(c.engine, expire_on_commit=False)
+    Session = sessionmaker(engine, expire_on_commit=False)
     session = Session()
     try:
         yield session
@@ -57,11 +59,6 @@ def cloud() -> dict:
         }
 
 
-def song_ids() -> list:
-    with session_scope() as session:
-        return [id[0] for id in session.query(Song.id).all()]
-
-
 def load_tables(record_dicts: list) -> None:
     with session_scope() as session:
         statements = [
@@ -81,6 +78,11 @@ def playlist() -> dict:
             .limit(300)
             .all()
         }
+
+
+def song_ids() -> list:
+    with session_scope() as session:
+        return [id[0] for id in session.query(Song.id).all()]
 
 
 def summary(year: datetime = int(datetime.datetime.today().strftime("%Y"))) -> dict:
