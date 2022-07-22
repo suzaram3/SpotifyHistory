@@ -7,7 +7,7 @@ from PIL import Image
 from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
 from SpotifyHistory.config import Config
-from Spotify.app.utils.queries import cloud
+from SpotifyHistory.app.utils.queries import cloud
 
 
 def grey_color_func(
