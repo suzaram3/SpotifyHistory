@@ -2,11 +2,11 @@ import base64
 
 from .spotify import SpotifyHandler
 from SpotifyHistory.config import Config
-from SpotifyHistory.app.utils import playlist_query
+from SpotifyHistory.app.utils.queries import playlist
 
 
 c, sp = Config(), SpotifyHandler()
-query_results = playlist_query()
+query_results = playlist()
 with open(c.config["spotify"]["top_100_cover_image"], "rb") as img_file:
     image_str = base64.b64encode(img_file.read())
 song_ids = [song[0] for song in query_results["top_songs"]]
