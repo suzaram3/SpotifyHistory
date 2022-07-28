@@ -1,5 +1,4 @@
-from datetime import date
-from sqlalchemy import cast, Date, func, select
+from datetime import datetime
 from SpotifyHistory.config import Config
 from SpotifyHistory.app.utils.queries import summary, engine
 
@@ -25,6 +24,7 @@ average_streams_per_day = sum(
 for day in query_results["freq_by_day"]:
     freq[day[0].strftime("%A")] = freq.get(day[0].strftime("%A")) + day[1]
 
+print(f"\n{datetime.utcnow().strftime('UTC: %Y-%m-%d %H:%M:%S')}")
 print(f"\n**SpotifyData[\033[1m{instance[:-1]}\033[0m]**\n-TableCounts-")
 [
     print(f"{model['model'].__name__}: {model['count']:,}")

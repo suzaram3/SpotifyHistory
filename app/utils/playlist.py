@@ -1,5 +1,4 @@
 import base64
-
 from .spotify import SpotifyHandler
 from SpotifyHistory.config import Config
 from SpotifyHistory.app.utils.queries import playlist

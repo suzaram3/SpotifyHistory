@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from multiprocessing import Process
 from PIL import Image
-from sqlalchemy import func
 from wordcloud import ImageColorGenerator, WordCloud
 from SpotifyHistory.config import Config
 from SpotifyHistory.app.utils.queries import cloud
