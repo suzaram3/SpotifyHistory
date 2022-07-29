@@ -6,6 +6,7 @@ from SpotifyHistory.app.utils.queries import summary, engine
 c = Config()
 instance = str(engine).split("/")[-1]
 
+
 freq = {
     "Monday": 0,
     "Tuesday": 0,
@@ -16,15 +17,17 @@ freq = {
     "Sunday": 0,
 }
 
-query_results = summary()
 
+query_results = summary()
 average_streams_per_day = sum(
     [row[0] for row in query_results["stream_count_per_day"]]
 ) // len(query_results["stream_count_per_day"])
 for day in query_results["freq_by_day"]:
     freq[day[0].strftime("%A")] = freq.get(day[0].strftime("%A")) + day[1]
 
-print(f"\n{datetime.utcnow().strftime('UTC: %Y-%m-%d %H:%M:%S')}")
+
+top_song_msg = ""
+print(f"\n\033[1mUTC\033[0m:{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"\n**SpotifyData[\033[1m{instance[:-1]}\033[0m]**\n-TableCounts-")
 [
     print(f"{model['model'].__name__}: {model['count']:,}")
@@ -36,9 +39,12 @@ print(f"\n*MiscellaneousData*")
 print(f"AverageStreamsPerDay : {average_streams_per_day}")
 print(f"StreamsToday: {query_results['play_today'][0]}")
 if query_results["top_song_today"][0] > 1:
-    print(
-        f"TodayTopSong: {query_results['top_song_today'][0]} plays | \"{query_results['top_song_today'][1]}\" - \033[1m{query_results['top_song_today'][2]}\033[0m"
+    top_song_msg = (
+        f"TodayTopSong: {query_results['top_song_today'][0]} "
+        f"plays | {query_results['top_song_today'][1]}"
+        f"- \033[1m{query_results['top_song_today'][2]}\033[0m"
     )
+    print(top_song_msg)
 print(f"StreamsThisYear: {query_results['year_count']:,}")
 print(f"StreamTimeInDays: {(query_results['days'][0] // 1000) // 86400}")
 print()
