@@ -19,4 +19,4 @@ class Config:
     # logging setup
     logging.config.fileConfig("/home/msuzara/SpotifyHistory/settings/logging.conf")
     console_logger = logging.getLogger("console")
-    file_logger = logging.getLogger("qa")
+    file_logger = logging.getLogger("prod")
