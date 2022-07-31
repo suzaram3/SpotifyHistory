@@ -34,7 +34,9 @@ post_insert = table_counts()
 
 # log amount of records loaded
 [
-    c.file_logger.info(f"{post['count'] - pre['count']} rows added to {post['model'].__name__}")
+    c.file_logger.info(
+        f"{post['count'] - pre['count']} rows added to {post['model'].__name__}"
+    )
     for post, pre in zip(post_insert, pre_insert)
     if post["count"] > pre["count"]
 ]

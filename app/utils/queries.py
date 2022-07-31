@@ -160,6 +160,17 @@ def update(id: str, length: int) -> dict:
         (session.query(Song).filter(Song.id == id).update({Song.length: length}))
 
 
+def weekly_summary(week: dict) -> dict:
+    with session_scope() as session:
+        for day in week:
+            day["count"] = (
+                session.query(func.count(SongStreamed.song_id))
+                .filter(cast(SongStreamed.played_at, Date) == day["week_day"])
+                .all()[0][0]
+            )
+        return week
+
+
 def yesterday_top_ten() -> dict:
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     with session_scope() as session:

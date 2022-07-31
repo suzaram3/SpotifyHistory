@@ -6,4 +6,6 @@ c, sp = Config(), SpotifyHandler()
 data = yesterday_top_ten()
 sp.update_playlist(c.config["spotify"]["yesterday_top_10_id"], data["song_ids"])
 sp.update_playlist_details(c.config["spotify"]["yesterday_top_10_id"], data["desc"])
-c.file_logger.info(F"{c.config['spotify']['yesterday_top_10_id']} top ten playlist updated")
+c.file_logger.info(
+    f"{c.config['spotify']['yesterday_top_10_id']} top ten playlist updated"
+)
