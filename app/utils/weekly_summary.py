@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from itertools import accumulate
 import matplotlib.pyplot as plt
 import numpy as np
 from SpotifyHistory.config import Config
@@ -56,10 +57,10 @@ def make_graph(data: list[dict]) -> None:
     c_map = plt.get_cmap("viridis")
     rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
     plt.bar(x, y, color=c_map(rescale(y)))
-    plt.xlabel(
+    plt.title(
         f"{data[0]['week_day'].strftime('%m-%d')}|{data[-1]['week_day'].strftime('%m-%d')}"
     )
-    plt.ylabel("StreamsPerDay")
+    plt.xlabel(f"Total: {sum([day['count'] for day in data])}")
     plt.savefig(
         fname=c.config["file_paths"]["weekly_summary"],
         dpi=600,
