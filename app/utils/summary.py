@@ -27,7 +27,7 @@ for day in query_results["freq_by_day"]:
 
 
 top_song_msg = ""
-print(f"\n\033[1mUTC\033[0m:{datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"\n\033[1mUTC\033[0m: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}")
 print(f"\n**SpotifyData[\033[1m{instance[:-1]}\033[0m]**\n-TableCounts-")
 [
     print(f"{model['model'].__name__}: {model['count']:,}")
