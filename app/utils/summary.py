@@ -19,9 +19,11 @@ freq = {
 
 
 query_results = summary()
+
 average_streams_per_day = sum(
     [row[0] for row in query_results["stream_count_per_day"]]
 ) // len(query_results["stream_count_per_day"])
+
 for day in query_results["freq_by_day"]:
     freq[day[0].strftime("%A")] = freq.get(day[0].strftime("%A")) + day[1]
 
@@ -38,7 +40,7 @@ print("\n*TotalDayFrequency*")
 print(f"\n*MiscellaneousData*")
 print(f"AverageStreamsPerDay : {average_streams_per_day}")
 print(f"StreamsToday: {query_results['play_today'][0]}")
-if query_results["top_song_today"][0] > 1:
+if query_results["top_song_today"] and query_results["top_song_today"][0] > 1:
     top_song_msg = (
         f"TodayTopSong: {query_results['top_song_today'][0]} "
         f"plays | {query_results['top_song_today'][1]}"
