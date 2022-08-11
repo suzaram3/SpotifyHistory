@@ -69,6 +69,22 @@ def load_tables(record_dicts: list) -> None:
         [session.execute(statement) for statement in statements]
 
 
+def monthly_summary(date: datetime) -> list[dict]:
+    with session_scope() as session:
+        return [
+            {"day": day[0].strftime("%d"), "count": day[1]}
+            for day in session.query(
+                cast(SongStreamed.played_at, Date),
+                func.count(cast(SongStreamed.played_at, Date)),
+            )
+            .filter(
+                cast(SongStreamed.played_at, Date).between(date.replace(day=1), date)
+            )
+            .group_by(cast(SongStreamed.played_at, Date))
+            .all()
+        ]
+
+
 def playlist() -> dict:
     with session_scope() as session:
         return {
