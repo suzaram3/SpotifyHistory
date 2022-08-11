@@ -20,7 +20,7 @@ def make_graph(data: dict) -> None:
     plt.xticks(rotation=45)
     plt.tick_params(axis='x', which='major', labelsize=8)
     plt.savefig(
-        fname=f"{c.config['file_paths']['monthly_summary']}/{data['date'].strftime('%y_%b')}.png",
+        fname=f"{c.config['file_paths']['monthly_summary']}/{data['date'].strftime('%y_%m')}.png",
         dpi=600,
     )
 
