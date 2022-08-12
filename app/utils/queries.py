@@ -85,15 +85,16 @@ def monthly_summary(date: datetime) -> list[dict]:
         ]
 
 
-def playlist() -> dict:
+def playlist() -> list:
     with session_scope() as session:
-        return {
-            "top_songs": session.query(SongStreamed.song_id)
+        return [
+            song[0]
+            for song in session.query(SongStreamed.song_id)
             .group_by(SongStreamed.song_id)
             .order_by(func.count(SongStreamed.song_id).desc())
-            .limit(300)
+            .limit(100)
             .all()
-        }
+        ]
 
 
 def song_ids() -> list:
@@ -101,7 +102,8 @@ def song_ids() -> list:
         return [id[0] for id in session.query(Song.id).all()]
 
 
-def summary(year: datetime = int(datetime.datetime.today().strftime("%Y"))) -> dict:
+def summary() -> dict:
+    year = int(datetime.datetime.today().strftime("%Y"))
     year_begin = datetime.datetime(year, 1, 1)
     year_end = datetime.datetime(year, 12, 31)
     with session_scope() as session:
@@ -171,7 +173,7 @@ def table_counts() -> dict:
         ]
 
 
-def update(id: str, length: int) -> dict:
+def update_song_length(id: str, length: int) -> dict:
     with session_scope() as session:
         (session.query(Song).filter(Song.id == id).update({Song.length: length}))
 
