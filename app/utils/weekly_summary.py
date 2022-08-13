@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 from itertools import accumulate
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +10,7 @@ c = Config()
 
 
 def get_week_range() -> dict:
-    today = date.today()
+    today = datetime.utcnow().date()
     start = today - timedelta(days=today.weekday())
     return [
         {

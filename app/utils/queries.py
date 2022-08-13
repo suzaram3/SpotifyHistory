@@ -103,7 +103,7 @@ def song_ids() -> list:
 
 
 def summary() -> dict:
-    year = int(datetime.datetime.today().strftime("%Y"))
+    year = int(datetime.datetime.utcnow().strftime("%Y"))
     year_begin = datetime.datetime(year, 1, 1)
     year_end = datetime.datetime(year, 12, 31)
     with session_scope() as session:
@@ -127,7 +127,7 @@ def summary() -> dict:
             ),
             "play_today": (
                 session.query(func.count(SongStreamed.song_id))
-                .filter(cast(SongStreamed.played_at, Date) == date.today())
+                .filter(cast(SongStreamed.played_at, Date) == datetime.datetime.utcnow().date())
                 .first()
             ),
             "top_song_today": (
@@ -145,7 +145,7 @@ def summary() -> dict:
                 Artist,
                 Artist.id == Song.artist_id,
             )
-            .filter(cast(SongStreamed.played_at, Date) == date.today())
+            .filter(cast(SongStreamed.played_at, Date) == datetime.datetime.utcnow().date())
             .group_by(
                 SongStreamed.song_id,
                 Song.name,
