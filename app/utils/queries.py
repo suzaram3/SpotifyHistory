@@ -97,6 +97,14 @@ def playlist() -> list:
         ]
 
 
+def query_all_song_streamed() -> list[object]:
+    with session_scope() as session:
+        return [
+            (i.song_id, i.played_at)
+            for i in session.query(SongStreamed).order_by(SongStreamed.played_at).all()
+        ]
+
+
 def song_ids() -> list:
     with session_scope() as session:
         return [id[0] for id in session.query(Song.id).all()]
