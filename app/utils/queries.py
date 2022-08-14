@@ -206,7 +206,7 @@ def weekly_summary(week: dict) -> dict:
 
 
 def yesterday_top_ten() -> dict:
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    yesterday = datetime.datetime.utcnow().date() - datetime.timedelta(days=1)
     with session_scope() as session:
         return {
             "date": yesterday,
