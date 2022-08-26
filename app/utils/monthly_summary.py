@@ -1,3 +1,4 @@
+from distutils.command.build_scripts import first_line_re
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import date, datetime, timedelta
@@ -28,10 +29,10 @@ def make_graph(data: dict) -> None:
 
 
 def main() -> None:
-    first_day_of_current_month = date.today().replace(day=1)
-    date_of_last_month = first_day_of_current_month - timedelta(days=1)
-    counts = monthly_summary(date_of_last_month)
-    make_graph({"date": date_of_last_month, "data": counts})
+    month = date.today().replace(day=1)
+    last_day_month = month - timedelta(days=1)
+    counts = monthly_summary(last_day_month)
+    make_graph({"date": last_day_month, "data": counts})
 
 
 main()
