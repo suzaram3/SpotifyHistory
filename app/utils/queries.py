@@ -1,7 +1,7 @@
 import datetime
 from contextlib import contextmanager
 from datetime import date
-from sqlalchemy import cast, create_engine, Date, func
+from sqlalchemy import cast, create_engine, distinct, Date, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.dialects import postgresql
@@ -232,3 +232,56 @@ def yesterday_top_ten() -> dict:
                 .all()
             ],
         }
+
+
+def distinct_songs() -> list:
+    with session_scope() as session:
+        return [i[0] for i in session.query(distinct(SongStreamed.song_id)).all()]
+
+
+def add_artists(data: dict) -> None:
+    with session_scope() as session:
+        statements = [
+            pg_insert(data["model"])
+            .values(
+                id=chunk.id,
+                name=chunk.name,
+            )
+            .on_conflict_do_nothing()
+            for chunk in data["data"]
+        ]
+        [session.execute(statement) for statement in statements]
+
+
+def add_albums(data: dict) -> None:
+    with session_scope() as session:
+        statements = [
+            pg_insert(data["model"])
+            .values(
+                id=chunk.id,
+                name=chunk.name,
+                release_year=chunk.release_year,
+                artist_id=chunk.artist_id,
+            )
+            .on_conflict_do_nothing()
+            for chunk in data["data"]
+        ]
+        [session.execute(statement) for statement in statements]
+
+
+def add_songs(data: dict) -> None:
+    with session_scope() as session:
+        statements = [
+            pg_insert(data["model"])
+            .values(
+                id=chunk.id,
+                name=chunk.name,
+                album_id=chunk.album_id,
+                artist_id=chunk.artist_id,
+                spotify_url=chunk.spotify_url,
+                length=chunk.length,
+            )
+            .on_conflict_do_nothing()
+            for chunk in data["data"]
+        ]
+        [session.execute(statement) for statement in statements]

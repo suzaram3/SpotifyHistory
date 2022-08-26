@@ -10,7 +10,7 @@ c = Config()
 
 
 def get_week_range() -> dict:
-    today = datetime.utcnow().date()
+    today = datetime.now().date()
     start = today - timedelta(days=today.weekday())
     return [
         {

@@ -32,6 +32,10 @@ class SpotifyHandler:
         """Return dict info from album id"""
         return self.sp.album(album_id)
 
+    def get_albums(self, albums: list) -> dict:
+        """Return dict info from album id"""
+        return self.sp.albums(albums)
+
     def get_current_track(self) -> dict:
         """Return dict of current playing song"""
         return self.sp.current_user_playing_track()
