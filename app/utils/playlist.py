@@ -12,4 +12,6 @@ with open(c.config["spotify"]["top_100_cover_image"], "rb") as img_file:
 sp.update_playlist(
     c.config["spotify"]["top_songs_playlist_id"], query_results, image_str
 )
-c.file_logger.info(f"Playlist: {c.config['spotify']['top_songs_playlist_id']} updated.")
+c.file_logger.info(
+    f"Top 100 playlist: {c.config['spotify']['top_songs_playlist_id']} updated."
+)

@@ -45,7 +45,7 @@ print(f"\n*TodayData*")
 print(f"StreamsToday: {query_results['play_today'][0]}")
 if query_results["top_song_today"] and query_results["top_song_today"][0] > 1:
     top_song_msg = (
-        f"TodayTopSong[{datetime.utcnow().date()}]: {query_results['top_song_today'][0]} "
+        f"TodayTopSong: {query_results['top_song_today'][0]} "
         f"plays | {query_results['top_song_today'][1]}"
         f"- \033[1m{query_results['top_song_today'][2]}\033[0m\n"
     )
