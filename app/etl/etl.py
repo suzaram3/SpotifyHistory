@@ -1,4 +1,5 @@
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from spotipy.oauth2 import SpotifyOauthError
 from SpotifyHistory.config import Config
 from SpotifyHistory.models.models import Album, Artist, Song, SongStreamed
 from SpotifyHistory.app.utils.spotify import SpotifyHandler
@@ -10,7 +11,11 @@ from .transform import TransformData
 c, sp, td = Config(), SpotifyHandler(), TransformData()
 
 # fetch
-spotify_response = sp.get_recently_played()
+try:
+    spotify_response = sp.get_recently_played()
+except SpotifyOauthError as e:
+    c.file_logger.error(e)
+    exit()
 
 # transform
 transform_raw_data = [td.transform_data(item) for item in spotify_response["items"]]
