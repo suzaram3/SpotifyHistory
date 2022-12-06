@@ -152,6 +152,27 @@ def summary() -> dict:
                 )
                 .first()
             ),
+            "top_artist_year": (
+                session.query(
+                    func.count(Artist.id),
+                    Artist.name,
+                )
+            )
+            .join(
+                Song,
+                Song.artist_id == Artist.id,
+            )
+            .join(
+                SongStreamed,
+                SongStreamed.song_id == Song.id,
+            )
+            .filter(cast(SongStreamed.played_at, Date) >= year_begin)
+            .group_by(
+                Artist.id,
+                Artist.name,
+            )
+            .order_by(func.count(Artist.id).desc())
+            .first(),
             "top_song_today": (
                 session.query(
                     func.count(SongStreamed.song_id),
@@ -170,6 +191,29 @@ def summary() -> dict:
             .filter(
                 cast(SongStreamed.played_at, Date) == datetime.datetime.utcnow().date()
             )
+            .group_by(
+                SongStreamed.song_id,
+                Song.name,
+                Artist.name,
+            )
+            .order_by(func.count(SongStreamed.song_id).desc())
+            .first(),
+            "top_song_year": (
+                session.query(
+                    func.count(SongStreamed.song_id),
+                    Song.name,
+                    Artist.name,
+                )
+            )
+            .join(
+                Song,
+                Song.id == SongStreamed.song_id,
+            )
+            .join(
+                Artist,
+                Artist.id == Song.artist_id,
+            )
+            .filter(cast(SongStreamed.played_at, Date) >= year_begin)
             .group_by(
                 SongStreamed.song_id,
                 Song.name,

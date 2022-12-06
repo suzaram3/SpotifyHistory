@@ -50,4 +50,11 @@ if query_results["top_song_today"] and query_results["top_song_today"][0] > 1:
         f"- \033[1m{query_results['top_song_today'][2]}\033[0m\n"
     )
     print(top_song_msg)
+print(f"\n*YearData*")
+print(
+    f"TopArtistThisYear: {query_results['top_artist_year'][1]} | Plays : {query_results['top_artist_year'][0]}"
+)
+print(
+    f"TopSongThisYear: {query_results['top_song_year'][1]} | Plays: {query_results['top_song_year'][0]} | Artist: {query_results['top_song_year'][2]}"
+)
 print()
