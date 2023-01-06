@@ -39,8 +39,8 @@ print("\n*TotalDayFrequency*")
 [print(f"{day}: {freq[day]:,}") for day in freq]
 print(f"\n*MiscellaneousData*")
 print(f"AverageStreamsPerDay : {average_streams_per_day}")
-print(f"StreamsThisYear: {query_results['year_count']:,}")
 print(f"StreamTimeInDays: {(query_results['days'][0] // 1000) // 86400}")
+print(f"StreamsThisYear: {query_results['year_count']:,}")
 print(f"\n*TodayData*")
 print(f"StreamsToday: {query_results['play_today'][0]}")
 if query_results["top_song_today"] and query_results["top_song_today"][0] > 1:
