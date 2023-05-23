@@ -1,4 +1,5 @@
 import datetime
+import random
 from contextlib import contextmanager
 from datetime import date
 from sqlalchemy import cast, create_engine, distinct, Date, func
@@ -103,6 +104,14 @@ def query_all_song_streamed() -> list[object]:
             (i.song_id, i.played_at)
             for i in session.query(SongStreamed).order_by(SongStreamed.played_at).all()
         ]
+
+
+def random_songs() -> dict:
+    today = datetime.datetime.today().date()
+    formatted_date = today.strftime("%Y-%m-%d")
+    with session_scope() as session:
+        all_songs = [(song[0]) for song in session.query(Song.id).all()]
+        return {"today": formatted_date, "song_ids": random.sample(all_songs, 100)}
 
 
 def song_ids() -> list:
