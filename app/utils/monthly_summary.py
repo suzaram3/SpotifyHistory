@@ -1,4 +1,3 @@
-from distutils.command.build_scripts import first_line_re
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import date, datetime, timedelta
