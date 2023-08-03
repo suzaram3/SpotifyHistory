@@ -36,6 +36,24 @@ class Artist(Base, DictMixin):
 
 
 @dataclass
+class ArtistGenre(Base, DictMixin):
+    """Class to represent an artist genre"""
+    __tablename__ = "artist_genres"
+    __table_args__ = {"schema": "music"}
+
+    artist_id: str = Column(
+        String(32),
+        primary_key=True,
+        comment="Artist ID  example: `{6eUKZXaKkcviH0Ku9w2n3V}`",
+    )
+    genre: str = Column(
+        String(64),
+        primary_key=True,
+        comment="Artist genre category",
+    )
+
+
+@dataclass
 class Album(Base, DictMixin):
     """Class to represent a record in the albums table"""
 
