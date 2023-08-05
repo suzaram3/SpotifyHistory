@@ -1,14 +1,13 @@
 import argparse
-import concurrent.futures
 import json
-from functools import partial
+
+from spotipy.client import Spotify
 from sqlalchemy import create_engine, exc as SQLAlchemyError
 
 
 from config import Config
 from database.utils import (
     create_database,
-    get_distinct_song_ids,
     get_random_songs,
     get_song_id_count,
     get_yesterday_top_ten,
@@ -18,6 +17,7 @@ from database.utils import (
 from utils.lib import (
     create_new_playlist,
     get_spotify_client,
+    is_spotify_instance,
     parse_current_song,
     parse_recent_tracks,
     prompt_for_playlist_info,
@@ -47,18 +47,20 @@ def create_new_spotify_playlist(config: Config) -> None:
     try:
         spotify_credentials = dict(config.config["spotify"])
         sp = get_spotify_client(spotify_credentials)
+        if is_spotify_instance(sp):
+            playlist_name, playlist_desc = prompt_for_playlist_info()
 
-        playlist_name, playlist_desc = prompt_for_playlist_info()
+            if not playlist_name or not playlist_desc:
+                print("Playlist name and description cannot be empty.")
+                return
 
-        if not playlist_name or not playlist_desc:
-            print("Playlist name and description cannot be empty.")
-            return
-
-        response = create_new_playlist(playlist_name, playlist_desc, sp)
-        if response[0]:
-            config.file_logger.info(response[0])
+            response = create_new_playlist(playlist_name, playlist_desc, sp)
+            if response[0]:
+                config.file_logger.info(response[0])
+            else:
+                config.file_logger.error(response[1])
         else:
-            config.file_logger.error(response[1])
+            config.file_logger("Error occured while creating Spotify client: %s", sp)
 
     except Exception as e:
         raise Exception("Error while creating playlist.") from e
@@ -81,15 +83,19 @@ def current_song(config: Config) -> None:
         engine = create_engine(config.db_config["db_uri"])
         spotify_credentials = dict(config.config["spotify"])
         sp = get_spotify_client(spotify_credentials)
-        song_data = sp.currently_playing()
+        if is_spotify_instance(sp):
+            song_data = sp.currently_playing()
 
-        if song_data:
-            current_song = parse_current_song(song_data)
-            count = get_song_id_count(engine, current_song.song_id)
-            print(f"SongStreams: {count}")
-            print(f"CurrentSong: {json.dumps(current_song.as_dict(), indent=4)}")
+            if song_data:
+                config.file_logger.info("song_data: %s", song_data)
+                current_song = parse_current_song(song_data)
+                count = get_song_id_count(engine, current_song[0].song_id)
+                print(f"StreamCount: {count}")
+                print(f"CurrentSong: {json.dumps(current_song[0].as_dict(), indent=4)}")
+            else:
+                print("Nothing playing currently")
         else:
-            print("Nothing playing currently")
+            config.file_logger("Error occured while creating Spotify client: %s", sp)
 
     except Exception as e:
         raise Exception("Error while fetching or processing song data.") from e
@@ -369,7 +375,15 @@ def main() -> None:
             "yesterday",
         ],
         required=True,
-        help="Specify the function to call (e.g., etl, current_song)",
+        help="Specify the function to call. Choose from the following options:\n"
+        "- create_new_spotify_playlist: Create a new Spotify playlist.\n"
+        "- current_song: Retrieve information about the currently playing song.\n"
+        "- daily_playlist: Generate a daily playlist based on specific criteria.\n"
+        "- db_setup: Set up the database for the application.\n"
+        "- etl: Perform ETL (Extract, Transform, Load) operations.\n"
+        "- random_playlist: Generate a random playlist.\n"
+        "- summary: Display a summary of relevant data.\n"
+        "- yesterday: Perform actions related to the previous day's data.",
     )
 
     args = parser.parse_args()

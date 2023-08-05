@@ -12,7 +12,7 @@ from PIL import Image
 from wordcloud import WordCloud, ImageColorGenerator
 
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth, CacheHandler, CacheFileHandler
+from spotipy.oauth2 import CacheFileHandler, SpotifyOAuth
 
 from database.models import (
     Album,
@@ -66,7 +66,7 @@ def create_new_playlist(
         return None, e
 
 
-def get_spotify_client(credentials: dict) -> spotipy.Spotify:
+def get_spotify_client(credentials: dict) -> Union[spotipy.Spotify, str]:
     """Create a Spotify client object for accessing Spotify's Web API.
 
     This function initializes and returns a Spotify client object using the provided
@@ -89,8 +89,9 @@ def get_spotify_client(credentials: dict) -> spotipy.Spotify:
               specifies the level of permissions the user grants to the application.
 
     Returns:
-        spotipy.Spotify: A Spotify client object that can be used to make requests to
-        the Spotify Web API.
+        Union[spotipy.Spotify, str]: If successful, returns a Spotify client object
+        that can be used to make requests to the Spotify Web API. If there's an error,
+        returns an error message as a string.
 
     Example:
         credentials = {
@@ -101,25 +102,28 @@ def get_spotify_client(credentials: dict) -> spotipy.Spotify:
             'scope': 'user-library-read user-read-recently-played',
         }
         spotify_client = create_spotify_client(credentials)
-        user_playlists = spotify_client.current_user_playlists()
-        print(user_playlists)
+        if isinstance(spotify_client, spotipy.Spotify):
+            user_playlists = spotify_client.current_user_playlists()
+            print(user_playlists)
+        else:
+            print(f"Error: {spotify_client}")
     """
-    cache_handler = CacheFileHandler(credentials["cache_path"])
+    try:
+        cache_handler = CacheFileHandler(credentials["cache_path"])
 
-    auth_manager = SpotifyOAuth(
-        cache_handler=cache_handler,
-        client_id=credentials["client_id"],
-        client_secret=credentials["client_secret"],
-        redirect_uri=credentials["redirect_uri"],
-        scope=credentials["scope"],
-        open_browser=False,
-        requests_timeout=10
-    )
-    # code = auth_manager._get_auth_response_interactive() 
-    # token = auth_manager.get_access_token(code)
-    # auth_manager.cache_handler.save_token_to_cache(token)
+        auth_manager = SpotifyOAuth(
+            cache_handler=cache_handler,
+            client_id=credentials["client_id"],
+            client_secret=credentials["client_secret"],
+            redirect_uri=credentials["redirect_uri"],
+            scope=credentials["scope"],
+            open_browser=False,
+            requests_timeout=10,
+        )
 
-    return spotipy.Spotify(auth_manager=auth_manager)
+        return spotipy.Spotify(auth_manager=auth_manager)
+    except Exception as e:
+        return str(e)
 
 
 """Data Extraction Modules"""
@@ -241,22 +245,24 @@ def parse_current_song(song_data: dict) -> Union[CurrentSong, str]:
         artist = song["artists"][0]
         album = song["album"]
 
-        return (
-            CurrentSong(
-                song_id=song["id"],
-                song_name=song["name"],
-                song_url=song["external_urls"]["spotify"],
-                song_artist_id=artist["id"],
-                song_artist_name=artist["name"],
-                song_album_id=album["id"],
-                song_album=album["name"],
-            ),
-            None,
+        current_song = CurrentSong(
+            song_id=song["id"],
+            song_name=song["name"],
+            song_url=song["external_urls"]["spotify"],
+            song_artist_id=artist["id"],
+            song_artist_name=artist["name"],
+            song_album_id=album["id"],
+            song_album=album["name"],
         )
+
+        return current_song, None  # Return the CurrentSong object and no error
+
     except KeyError as e:
-        return None, str(e)
+        error_message = f"KeyError: {e}"
+        return None, error_message
     except (TypeError, IndexError) as e:
-        return None, str(e)
+        error_message = f"TypeError or IndexError: {e}"
+        return None, error_message
 
 
 """I/O Modules"""
@@ -370,6 +376,7 @@ def get_dates_of_week() -> list[datetime]:
     week_dates = [start_date + timedelta(days=i) for i in range(7)]
     return week_dates
 
+
 def get_unix_timestamps():
     timestamps = []
     now = int(time.time())  # Current Unix timestamp in seconds
@@ -382,6 +389,10 @@ def get_unix_timestamps():
         timestamp += 1800  # Increment by 30 minutes (1800 seconds)
 
     return timestamps
+
+
+def is_spotify_instance(spotify_object: spotipy.Spotify) -> bool:
+    return type(spotify_object) is spotipy.Spotify
 
 
 """WordCloud Modules"""

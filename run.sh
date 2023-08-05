@@ -25,6 +25,10 @@ run_python_script() {
     deactivate_venv
 }
 
+current_song() {
+    run_python_script "current_song"
+}
+
 run_etl() {
     run_python_script "etl"
 }
@@ -47,6 +51,9 @@ if [ -z "$1" ]; then
 fi
 
 case "$1" in
+"current_song")
+    current_song
+    ;;
 "etl")
     run_etl
     ;;
