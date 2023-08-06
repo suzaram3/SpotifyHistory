@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Optional, Tuple, Union
 from datetime import datetime, timedelta
 
@@ -46,11 +47,9 @@ def create_new_playlist(
         spotipy.SpotifyException: If there is an error in the Spotify authentication process.
     """
     try:
-        # Get the user ID
         response = sp.current_user()
         user_id = response["id"]
 
-        # Create the playlist
         playlist = sp.user_playlist_create(
             user_id, playlist_name, public=True, description=playlist_desc
         )
@@ -136,7 +135,17 @@ def chunk_list(lst: list, chunk_size: int = 50):
 def parse_recent_tracks(
     file_name: str,
 ) -> Tuple[
-    Union[Tuple[List[Artist], List[Album], List[Song], List[SongStreamed]], str]
+    Union[
+        Tuple[
+            List[Artist],
+            List[Album],
+            List[AlbumArtist],
+            List[Song],
+            List[SongArtist],
+            List[SongStreamed],
+        ],
+        str,
+    ]
 ]:
     """
     Parse the recent tracks data from a JSON file.
@@ -145,31 +154,24 @@ def parse_recent_tracks(
         file_name (str): The name of the JSON file containing recent tracks data.
 
     Returns:
-        Tuple: A tuple containing the parsed data as lists of Artists, Albums, Songs,
-               SongArtists, and SongStreamed. If an error occurs during parsing, a
-               tuple containing (None, error_message) is returned.
+        Tuple: A tuple containing the parsed data as lists of Artists, Albums, AlbumArtists,
+               Songs, SongArtists, and SongStreamed. If an error occurs during parsing,
+               a tuple containing (None, error_message) is returned.
 
     Raises:
         FileNotFoundError: If the specified file_name is not found.
         KeyError: If a required key is missing in the JSON data.
     """
-    recent_artists = []
-    recent_albums = []
-    recent_album_artists = []
-    recent_songs = []
-    recent_song_artists = []
-    recent_streams = []
-
     try:
+        recent_entities = defaultdict(list)
+
         with open(file_name, "r", encoding="utf-8") as fp:
             data = json.load(fp)
 
         for item in data:
             album_section = item["track"]["album"]
             artists_section = item["track"]["artists"]
-
             album_id = album_section["id"]
-
             length = item["track"]["duration_ms"]
             played_at = item["played_at"]
             song_id = item["track"]["id"]
@@ -178,53 +180,43 @@ def parse_recent_tracks(
             new_song = Song(
                 id=song_id, name=song_name, album_id=album_id, length=length
             )
-            recent_songs.append(new_song)
-
-            new_song_streamed = SongStreamed(song_id=song_id, played_at=played_at)
-            recent_streams.append(new_song_streamed)
+            recent_entities["songs"].append(new_song)
+            recent_entities["streams"].append(
+                SongStreamed(song_id=song_id, played_at=played_at)
+            )
 
             new_album = Album(
-                id=album_section["id"],
+                id=album_id,
                 name=album_section["name"],
                 release_year=album_section["release_date"][:4],
             )
-            recent_albums.append(new_album)
+            recent_entities["albums"].append(new_album)
 
             for artist in artists_section:
-                new_artist = Artist(
-                    id=artist["id"],
-                    name=artist["name"],
+                artist_id = artist["id"]
+                recent_entities["artists"].append(
+                    Artist(id=artist_id, name=artist["name"])
                 )
-                recent_artists.append(new_artist)
-                new_song_artists = SongArtist(
-                    song_id=song_id,
-                    artist_id=artist["id"],
+                recent_entities["album_artists"].append(
+                    AlbumArtist(album_id=album_id, artist_id=artist_id)
                 )
-                recent_song_artists.append(new_song_artists)
-
-            for artist in album_section["artists"]:
-                new_album_artist = AlbumArtist(
-                    album_id=album_id, artist_id=artist["id"]
+                recent_entities["song_artists"].append(
+                    SongArtist(song_id=song_id, artist_id=artist_id)
                 )
-                recent_album_artists.append(new_album_artist)
 
         return (
-            recent_artists,
-            recent_albums,
-            recent_album_artists,
-            recent_songs,
-            recent_song_artists,
-            recent_streams,
+            recent_entities["artists"],
+            recent_entities["albums"],
+            recent_entities["album_artists"],
+            recent_entities["songs"],
+            recent_entities["song_artists"],
+            recent_entities["streams"],
         ), None
 
     except FileNotFoundError as e:
         return None, str(e)
 
     except KeyError as e:
-        return None, str(e)
-
-    except Exception as e:
-        print(f"Error: {str(e)}")
         return None, str(e)
 
 
@@ -255,7 +247,7 @@ def parse_current_song(song_data: dict) -> Union[CurrentSong, str]:
             song_album=album["name"],
         )
 
-        return current_song, None  # Return the CurrentSong object and no error
+        return current_song, None
 
     except KeyError as e:
         error_message = f"KeyError: {e}"
@@ -379,14 +371,13 @@ def get_dates_of_week() -> list[datetime]:
 
 def get_unix_timestamps():
     timestamps = []
-    now = int(time.time())  # Current Unix timestamp in seconds
-    yesterday = now - 86400  # Subtract 24 hours (86400 seconds)
+    now = int(time.time())
+    yesterday = now - 86400
 
-    # Generate timestamps in 30-minute increments
     timestamp = yesterday
     while timestamp <= now:
-        timestamps.append(timestamp * 1000)  # Convert seconds to milliseconds
-        timestamp += 1800  # Increment by 30 minutes (1800 seconds)
+        timestamps.append(timestamp * 1000)
+        timestamp += 1800
 
     return timestamps
 
