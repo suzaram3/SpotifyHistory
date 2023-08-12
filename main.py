@@ -1,9 +1,7 @@
 import argparse
 import json
 
-from spotipy.client import Spotify
 from sqlalchemy import create_engine, exc as SQLAlchemyError
-
 
 from config import Config
 from database.utils import (
