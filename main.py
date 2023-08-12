@@ -87,7 +87,8 @@ def current_song(config: Config) -> None:
             song_data = sp.currently_playing()
 
             if song_data:
-                config.file_logger.info("song_data: %s", song_data)
+                with open("/tmp/current_song.json", "w", encoding="utf-8") as fp:
+                    json.dump(song_data, fp, indent=4)
                 current_song = parse_current_song(song_data)
                 count = get_song_id_count(engine, current_song[0].song_id)
                 print(f"StreamCount: {count}")
